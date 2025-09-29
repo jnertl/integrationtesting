@@ -35,15 +35,16 @@ pipeline {
                     cd "${git_checkout_root}/middlewaresw"
                     build_application/middlewaresw 100 > "${WORKSPACE}/middlewaresw.log" 2>&1 &
                     MIDDLEWARESW_PID=$!
-                    sleep 2
 
                     # Start mwclientwithgui in the background
                     cd "${git_checkout_root}/mwclientwithgui"
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    pip install -r requirements.txt
-                    python mw_gui_client.py > "${WORKSPACE}/mwclientwithgui.log" 2>&1 &
+                    export UV_VENV_CLEAR=1
+                    uv venv mcpdemo_venv
+                    . mcpdemo_venv/bin/activate
+                    uv pip install -r requirements.txt
+                    xvfb-run python mw_gui_client.py > "${WORKSPACE}/mwclientwithgui.log" 2>&1 &
                     MWCLIENTWITHGUI_PID=$!
+
                     sleep 2
 
                     # Check if middlewaresw is running
