@@ -58,8 +58,8 @@ pipeline {
                     MWCLIENTWITHGUI_PID=$!
                     echo "Started mwclientwithgui with PID $MWCLIENTWITHGUI_PID"
 
-                    echo "Waiting 2 seconds before next check..."
-                    sleep 2
+                    echo "Waiting 5 seconds before next check..."
+                    sleep 5
 
                     # Check if middlewaresw is running
                     MW_SW_FAILED=0
