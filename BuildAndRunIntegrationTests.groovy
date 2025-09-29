@@ -28,13 +28,25 @@ pipeline {
                 '''
             }
         }
+        stage('Cleanup workspace') {
+            steps {
+                sh '''
+                    rm -fr "${WORKSPACE}/middlewaresw.log" || true
+                    rm -fr "${WORKSPACE}/mwclientwithgui.log" || true
+                '''
+            }
+        }
         stage('Run integration tests') {
             steps {
                 sh '''
+                    # Make sure no old instances are running
+                    killall -9 middlewaresw || true
+
                     # Start middlewaresw in the background
                     cd "${git_checkout_root}/middlewaresw"
                     build_application/middlewaresw 100 > "${WORKSPACE}/middlewaresw.log" 2>&1 &
                     MIDDLEWARESW_PID=$!
+                    echo "Started middlewaresw with PID $MIDDLEWARESW_PID"
 
                     # Start mwclientwithgui in the background
                     cd "${git_checkout_root}/mwclientwithgui"
@@ -44,7 +56,9 @@ pipeline {
                     /root/.local/bin/uv pip install -r requirements.txt
                     xvfb-run python mw_gui_client.py > "${WORKSPACE}/mwclientwithgui.log" 2>&1 &
                     MWCLIENTWITHGUI_PID=$!
+                    echo "Started mwclientwithgui with PID $MWCLIENTWITHGUI_PID"
 
+                    echo "Waiting 2 seconds before next check..."
                     sleep 2
 
                     # Check if middlewaresw is running
