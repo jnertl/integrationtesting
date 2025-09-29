@@ -39,9 +39,9 @@ pipeline {
                     # Start mwclientwithgui in the background
                     cd "${git_checkout_root}/mwclientwithgui"
                     export UV_VENV_CLEAR=1
-                    uv venv mcpdemo_venv
+                    /root/.local/bin/uv venv mcpdemo_venv
                     . mcpdemo_venv/bin/activate
-                    uv pip install -r requirements.txt
+                    /root/.local/bin/uv pip install -r requirements.txt
                     xvfb-run python mw_gui_client.py > "${WORKSPACE}/mwclientwithgui.log" 2>&1 &
                     MWCLIENTWITHGUI_PID=$!
 
