@@ -40,7 +40,7 @@ pipeline {
             steps {
                 sh '''
                     # Make sure no old instances are running
-                    killall -9 middlewaresw || true
+                    pkill middlewaresw || true
 
                     # Start middlewaresw in the background
                     cd "${git_checkout_root}/middlewaresw"
