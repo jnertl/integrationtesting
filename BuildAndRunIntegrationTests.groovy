@@ -65,8 +65,37 @@ pipeline {
                         MW_CLIENT_FAILED=1
                     fi
 
+                    # Terminate both processes
+                    kill -9 $MIDDLEWARESW_PID
+                    kill -9 $MWCLIENTWITHGUI_PID
+
                     # Only exit after both checks
                     if [ $MW_SW_FAILED -ne 0 ] || [ $MW_CLIENT_FAILED -ne 0 ]; then
+                        exit 1 
+                    fi
+                '''
+            }
+        }
+        stage('Analyse results') {
+            steps {
+                sh '''
+                    # Check for "Socket server started on port 5555" in middlewaresw.log
+                    if grep -q "Socket server started on port 5555" "${WORKSPACE}/middlewaresw.log"; then
+                        SOCKET_SERVER_STARTED=1
+                    else
+                        SOCKET_SERVER_STARTED=0
+                    fi
+
+                    # Check for "Received RPM: <number>, TEMP: <number>" in mwclientwithgui.log
+                    if grep -Eq "Received RPM: [0-9]+, TEMP: [0-9]+" "${WORKSPACE}/mwclientwithgui.log"; then
+                        RECEIVED_RPM_TEMP=1
+                    else
+                        RECEIVED_RPM_TEMP=0
+                    fi
+
+                    # Fail if either check did not pass
+                    if [ $SOCKET_SERVER_STARTED -ne 1 ] || [ $RECEIVED_RPM_TEMP -ne 1 ]; then
+                        echo "Log checks failed."
                         exit 1
                     fi
                 '''
