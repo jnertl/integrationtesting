@@ -114,15 +114,15 @@ pipeline {
 
                     echo "Check for 'Received RPM: <number>, TEMP: <number>, OIL PRESSURE: <number>' in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
                     if grep -Eq "Received RPM: [0-9]+, TEMP: [0-9]+, OIL PRESSURE: [0-9]+" "${WORKSPACE}/mwclientwithgui.log"; then
-                        RECEIVED_RPM_TEMP=1
+                        CLIENT_RECEIVED_DATA=1
                     else
                         echo "TEST FAILED: 'Received RPM: <number>, TEMP: <number>, OIL PRESSURE: <number>' was not found in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
-                        RECEIVED_RPM_TEMP=0
+                        CLIENT_RECEIVED_DATA=0
                     fi
 
                     # Fail if either check did not pass
-                    if [ $SOCKET_SERVER_STARTED -ne 1 ] || [ $RECEIVED_RPM_TEMP -ne 1 ]; then
-                        echo "TEST FAILED: Log checks failed." | tee -a "${WORKSPACE}/test_results.log"
+                    if [ $SOCKET_SERVER_STARTED -ne 1 ] || [ $CLIENT_RECEIVED_DATA -ne 1 ]; then
+                        echo "TEST FAILED: One of the log checks failed." | tee -a "${WORKSPACE}/test_results.log"
                     fi
                 '''
             }
