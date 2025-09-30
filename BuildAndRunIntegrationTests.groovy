@@ -44,7 +44,7 @@ pipeline {
 
                     # Start middlewaresw in the background
                     cd "${git_checkout_root}/middlewaresw"
-                    build_application/middlewaresw 100 2>&1 | tee "${WORKSPACE}/middlewaresw.log" &
+                    build_application/middlewaresw 1000 2>&1 | tee "${WORKSPACE}/middlewaresw.log" &
                     MIDDLEWARESW_PID=$!
                     echo "Started middlewaresw with PID $MIDDLEWARESW_PID"
 
