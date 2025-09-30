@@ -112,7 +112,6 @@ pipeline {
                         SOCKET_SERVER_STARTED=0
                     fi
 
-Received RPM: 2749, TEMP: 71, OIL PRESSURE: 54
                     echo "Check for 'Received RPM: <number>, TEMP: <number>, OIL PRESSURE: <number>' in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
                     if grep -Eq "Received RPM: [0-9]+, TEMP: [0-9]+, OIL PRESSURE: [0-9]+" "${WORKSPACE}/mwclientwithgui.log"; then
                         RECEIVED_RPM_TEMP=1
