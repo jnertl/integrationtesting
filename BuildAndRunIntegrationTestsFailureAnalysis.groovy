@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        git_checkout_root = '/var/jenkins_home/workspace/build_and_ut_git_checkout'
+        git_checkout_root = '/var/jenkins_home/workspace/integration_test_failure_analysis_git_checkout'
     }
     stages {
         stage('Checkout') {
@@ -77,7 +77,7 @@ pipeline {
                     if kill -0 $MIDDLEWARESW_PID 2>/dev/null; then
                         echo "Process MIDDLEWARESW_PID ($MIDDLEWARESW_PID) is still running."
                     else
-                        echo "Process MIDDLEWARESW_PID ($MIDDLEWARESW_PID) is not running." | tee -a "${WORKSPACE}/test_results.log"
+                        echo "TEST FAILED: Process MIDDLEWARESW_PID ($MIDDLEWARESW_PID) is not running." | tee -a "${WORKSPACE}/test_results.log"
                         MW_SW_FAILED=1
                     fi
 
@@ -86,17 +86,17 @@ pipeline {
                     if kill -0 $MWCLIENTWITHGUI_PID 2>/dev/null; then
                         echo "Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is still running."
                     else
-                        echo "Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is not running." | tee -a "${WORKSPACE}/test_results.log"
+                        echo "TEST FAILED: Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is not running." | tee -a "${WORKSPACE}/test_results.log"
                         MW_CLIENT_FAILED=1
                     fi
 
                     # Terminate both processes
-                    kill -9 $MIDDLEWARESW_PID
-                    kill -9 $MWCLIENTWITHGUI_PID
+                    kill -9 $MIDDLEWARESW_PID || true
+                    kill -9 $MWCLIENTWITHGUI_PID || true
 
                     # Only exit after both checks
                     if [ $MW_SW_FAILED -ne 0 ] || [ $MW_CLIENT_FAILED -ne 0 ]; then
-                        exit 1 
+                        echo "TEST FAILED: One of the expected processes is not running." | tee -a "${WORKSPACE}/test_results.log"
                     fi
                 '''
             }
@@ -122,8 +122,7 @@ pipeline {
 
                     # Fail if either check did not pass
                     if [ $SOCKET_SERVER_STARTED -ne 1 ] || [ $RECEIVED_RPM_TEMP -ne 1 ]; then
-                        echo "Log checks failed."
-                        exit 1
+                        echo "TEST FAILED: Log checks failed." | tee -a "${WORKSPACE}/test_results.log"
                     fi
                 '''
             }
@@ -138,19 +137,7 @@ pipeline {
                 cd mcpdemo
                 git --no-pager show --summary
 
-                # Set up middleware context for analysis
-                export SOURCE_DIR="$git_checkout_root/middlewaresw"
-                export REQUIREMENTS_FILE="$SOURCE_DIR/feature_requirements.md"
-                export CONTEXT_FILE="$SOURCE_DIR/mw_src_context.txt"
-                ./create_context.sh
-                export MW_CONTEXT_FILE=$CONTEXT_FILE
-
-                # Set up gui client context for analysis
-                export SOURCE_DIR="$git_checkout_root/mwclientwithgui"
-                export CONTEXT_FILE="$SOURCE_DIR/gui_src_context.txt"
-                ./create_context.sh
-                export GUI_CONTEXT_FILE=$CONTEXT_FILE
-
+                export SOURCE_ROOT_DIR="$git_checkout_root"
                 export MW_LOG=$(cat "${WORKSPACE}/middlewaresw.log")
                 export GUI_LOG=$(cat "${WORKSPACE}/mwclientwithgui.log")
                 export TEST_RESULTS_LOG=$(cat "${WORKSPACE}/test_results.log" || echo "No test_results.log found.")
@@ -158,6 +145,19 @@ pipeline {
                 echo "MW_LOG: $MW_LOG"
                 echo "GUI_LOG: $GUI_LOG"
                 echo "TEST_RESULTS_LOG: $TEST_RESULTS_LOG"
+
+                # Set up middleware context for analysis
+                export SOURCE_DIR="$SOURCE_ROOT_DIR/middlewaresw"
+                export REQUIREMENTS_FILE="$SOURCE_DIR/feature_requirements.md"
+                export CONTEXT_FILE="$SOURCE_ROOT_DIR/mw_src_context.txt"
+                ./create_context.sh
+                export MW_CONTEXT_FILE=$CONTEXT_FILE
+
+                # Set up gui client context for analysis
+                export SOURCE_DIR="$SOURCE_ROOT_DIR/mwclientwithgui"
+                export CONTEXT_FILE="$SOURCE_ROOT_DIR/gui_src_context.txt"
+                ./create_context.sh
+                export GUI_CONTEXT_FILE=$CONTEXT_FILE
 
                 ./ongoing_printer.sh \
                 /usr/local/bin/mcphost \
