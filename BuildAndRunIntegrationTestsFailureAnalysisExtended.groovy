@@ -24,7 +24,7 @@ pipeline {
             steps {
                 sh '''
                     echo "Making integration test fail by returning out of range value"
-                    sed -i 's/return oilPressureDist(rng)/return oilPressureDist(400)/' "${git_checkout_root}/middlewaresw/src/Receiver.cpp"
+                    sed -i 's/return receiver.GetTemperature()/return 9999/' "${git_checkout_root}/middlewaresw/src/Engine.cpp"
 
                 '''
             }
