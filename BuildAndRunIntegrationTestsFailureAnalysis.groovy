@@ -112,11 +112,12 @@ pipeline {
                         SOCKET_SERVER_STARTED=0
                     fi
 
-                    echo "Check for 'Received RPM: <number>, TEMP: <number>' in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
-                    if grep -Eq "Received RPM: [0-9]+, TEMP: [0-9]+" "${WORKSPACE}/mwclientwithgui.log"; then
+Received RPM: 2749, TEMP: 71, OIL PRESSURE: 54
+                    echo "Check for 'Received RPM: <number>, TEMP: <number>, OIL PRESSURE: <number>' in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
+                    if grep -Eq "Received RPM: [0-9]+, TEMP: [0-9]+, OIL PRESSURE: [0-9]+" "${WORKSPACE}/mwclientwithgui.log"; then
                         RECEIVED_RPM_TEMP=1
                     else
-                        echo "TEST FAILED: 'Received RPM: <number>, TEMP: <number>' was not found in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
+                        echo "TEST FAILED: 'Received RPM: <number>, TEMP: <number>, OIL PRESSURE: <number>' was not found in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
                         RECEIVED_RPM_TEMP=0
                     fi
 
@@ -148,7 +149,6 @@ pipeline {
 
                 # Set up middleware context for analysis
                 export SOURCE_DIR="$SOURCE_ROOT_DIR/middlewaresw"
-                export REQUIREMENTS_FILE="$SOURCE_DIR/feature_requirements.md"
                 export CONTEXT_FILE="$SOURCE_ROOT_DIR/mw_src_context.txt"
                 ./create_context.sh
                 export MW_CONTEXT_FILE=$CONTEXT_FILE
@@ -158,6 +158,8 @@ pipeline {
                 export CONTEXT_FILE="$SOURCE_ROOT_DIR/gui_src_context.txt"
                 ./create_context.sh
                 export GUI_CONTEXT_FILE=$CONTEXT_FILE
+
+                export TEST_REQUIREMENTS_FILE="${WORKSPACE}/integration_testing_requirements.md"
 
                 ./ongoing_printer.sh \
                 /usr/local/bin/mcphost \
