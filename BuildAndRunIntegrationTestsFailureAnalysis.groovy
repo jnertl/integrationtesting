@@ -20,6 +20,15 @@ pipeline {
                 '''
             }
         }
+        stage('Make integration test fail') {
+            steps {
+                sh '''
+                    echo "Making integration test fail by changing port in mwclientwithgui"
+                    sed -i 's/^ENGINE_SOCKET_PORT = 5555$/ENGINE_SOCKET_PORT = 6666/' "${git_checkout_root}/mwclientwithgui/mw_gui_client.py"
+
+                '''
+            }
+        }
         stage('Build binaries') {
             steps {
                 sh '''
