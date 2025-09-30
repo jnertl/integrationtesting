@@ -68,7 +68,7 @@ pipeline {
                     if kill -0 $MIDDLEWARESW_PID 2>/dev/null; then
                         echo "Process MIDDLEWARESW_PID ($MIDDLEWARESW_PID) is still running."
                     else
-                        echo "Process MIDDLEWARESW_PID ($MIDDLEWARESW_PID) is not running."
+                        echo "Process MIDDLEWARESW_PID ($MIDDLEWARESW_PID) is not running." | tee -a "${WORKSPACE}/test_results.log"
                         MW_SW_FAILED=1
                     fi
 
@@ -77,7 +77,7 @@ pipeline {
                     if kill -0 $MWCLIENTWITHGUI_PID 2>/dev/null; then
                         echo "Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is still running."
                     else
-                        echo "Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is not running."
+                        echo "Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is not running." | tee -a "${WORKSPACE}/test_results.log"
                         MW_CLIENT_FAILED=1
                     fi
 
@@ -95,19 +95,19 @@ pipeline {
         stage('Analyse results') {
             steps {
                 sh '''
-                    echo "Check for 'Socket server started on port 5555' in middlewaresw.log" >> "${WORKSPACE}/test_results.log"
+                    echo "Check for 'Socket server started on port 5555' in middlewaresw.log" | tee -a "${WORKSPACE}/test_results.log"
                     if grep -q "Socket server started on port 5555" "${WORKSPACE}/middlewaresw.log"; then
                         SOCKET_SERVER_STARTED=1
                     else
-                        echo "TEST FAILED: 'Socket server started on port 5555' was not found in middlewaresw.log" >> "${WORKSPACE}/test_results.log"
+                        echo "TEST FAILED: 'Socket server started on port 5555' was not found in middlewaresw.log" | tee -a "${WORKSPACE}/test_results.log"
                         SOCKET_SERVER_STARTED=0
                     fi
 
-                    echo "Check for 'Received RPM: <number>, TEMP: <number>' in mwclientwithgui.log" >> "${WORKSPACE}/test_results.log"
+                    echo "Check for 'Received RPM: <number>, TEMP: <number>' in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
                     if grep -Eq "Received RPM: [0-9]+, TEMP: [0-9]+" "${WORKSPACE}/mwclientwithgui.log"; then
                         RECEIVED_RPM_TEMP=1
                     else
-                        echo "TEST FAILED: 'Received RPM: <number>, TEMP: <number>' was not found in mwclientwithgui.log" >> "${WORKSPACE}/test_results.log"
+                        echo "TEST FAILED: 'Received RPM: <number>, TEMP: <number>' was not found in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
                         RECEIVED_RPM_TEMP=0
                     fi
 
