@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        git_checkout_root = '/var/jenkins_home/workspace/build_and_ut_git_checkout'
+        git_checkout_root = '/var/jenkins_home/workspace/integration_test_failure_analysis_git_checkout'
     }
     stages {
         stage('Checkout') {
@@ -33,6 +33,7 @@ pipeline {
                 sh '''
                     rm -fr "${WORKSPACE}/middlewaresw.log" || true
                     rm -fr "${WORKSPACE}/mwclientwithgui.log" || true
+                    rm -fr "${WORKSPACE}/test_results.log" || true
                 '''
             }
         }
@@ -67,7 +68,7 @@ pipeline {
                     if kill -0 $MIDDLEWARESW_PID 2>/dev/null; then
                         echo "Process MIDDLEWARESW_PID ($MIDDLEWARESW_PID) is still running."
                     else
-                        echo "Process MIDDLEWARESW_PID ($MIDDLEWARESW_PID) is not running."
+                        echo "TEST FAILED: Process MIDDLEWARESW_PID ($MIDDLEWARESW_PID) is not running." | tee -a "${WORKSPACE}/test_results.log"
                         MW_SW_FAILED=1
                     fi
 
@@ -76,17 +77,17 @@ pipeline {
                     if kill -0 $MWCLIENTWITHGUI_PID 2>/dev/null; then
                         echo "Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is still running."
                     else
-                        echo "Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is not running."
+                        echo "TEST FAILED: Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is not running." | tee -a "${WORKSPACE}/test_results.log"
                         MW_CLIENT_FAILED=1
                     fi
 
                     # Terminate both processes
-                    kill -9 $MIDDLEWARESW_PID
-                    kill -9 $MWCLIENTWITHGUI_PID
+                    kill -9 $MIDDLEWARESW_PID || true
+                    kill -9 $MWCLIENTWITHGUI_PID || true
 
                     # Only exit after both checks
                     if [ $MW_SW_FAILED -ne 0 ] || [ $MW_CLIENT_FAILED -ne 0 ]; then
-                        exit 1 
+                        echo "TEST FAILED: One of the expected processes is not running." | tee -a "${WORKSPACE}/test_results.log"
                     fi
                 '''
             }
@@ -94,24 +95,25 @@ pipeline {
         stage('Analyse results') {
             steps {
                 sh '''
-                    # Check for "Socket server started on port 5555" in middlewaresw.log
+                    echo "Check for 'Socket server started on port 5555' in middlewaresw.log" | tee -a "${WORKSPACE}/test_results.log"
                     if grep -q "Socket server started on port 5555" "${WORKSPACE}/middlewaresw.log"; then
                         SOCKET_SERVER_STARTED=1
                     else
+                        echo "TEST FAILED: 'Socket server started on port 5555' was not found in middlewaresw.log" | tee -a "${WORKSPACE}/test_results.log"
                         SOCKET_SERVER_STARTED=0
                     fi
 
-                    # Check for "Received RPM: <number>, TEMP: <number>" in mwclientwithgui.log
-                    if grep -Eq "Received RPM: [0-9]+, TEMP: [0-9]+" "${WORKSPACE}/mwclientwithgui.log"; then
-                        RECEIVED_RPM_TEMP=1
+                    echo "Check for 'Received RPM: <number>, TEMP: <number>, OIL PRESSURE: <number>' in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
+                    if grep -Eq "Received RPM: [0-9]+, TEMP: [0-9]+, OIL PRESSURE: [0-9]+" "${WORKSPACE}/mwclientwithgui.log"; then
+                        CLIENT_RECEIVED_DATA=1
                     else
-                        RECEIVED_RPM_TEMP=0
+                        echo "TEST FAILED: 'Received RPM: <number>, TEMP: <number>, OIL PRESSURE: <number>' was not found in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
+                        CLIENT_RECEIVED_DATA=0
                     fi
 
                     # Fail if either check did not pass
-                    if [ $SOCKET_SERVER_STARTED -ne 1 ] || [ $RECEIVED_RPM_TEMP -ne 1 ]; then
-                        echo "Log checks failed."
-                        exit 1
+                    if [ $SOCKET_SERVER_STARTED -ne 1 ] || [ $CLIENT_RECEIVED_DATA -ne 1 ]; then
+                        echo "TEST FAILED: One of the log checks failed." | tee -a "${WORKSPACE}/test_results.log"
                     fi
                 '''
             }
@@ -119,6 +121,11 @@ pipeline {
     }
     post {
         always {
+            archiveArtifacts(
+                artifacts: 'test_results.log',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
             archiveArtifacts(
                 artifacts: 'middlewaresw.log',
                 fingerprint: true,
