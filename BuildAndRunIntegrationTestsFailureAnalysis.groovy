@@ -143,18 +143,18 @@ pipeline {
                 export TEST_RESULTS_LOG=$(cat "${WORKSPACE}/test_results.log" || echo "No test_results.log found.")
                 
                 # Set up middleware context for analysis
+                export MW_CONTEXT_FILE=mw_src_context.txt
                 export SOURCE_DIR="$SOURCE_ROOT_DIR/middlewaresw"
-                export CONTEXT_FILE="$SOURCE_ROOT_DIR/mw_src_context.txt"
+                export CONTEXT_FILE="$SOURCE_ROOT_DIR/$MW_CONTEXT_FILE"
                 ./create_context.sh
-                export MW_CONTEXT_FILE=$CONTEXT_FILE
 
                 # Set up gui client context for analysis
+                export GUI_CONTEXT_FILE=gui_src_context.txt
                 export SOURCE_DIR="$SOURCE_ROOT_DIR/mwclientwithgui"
-                export CONTEXT_FILE="$SOURCE_ROOT_DIR/gui_src_context.txt"
+                export CONTEXT_FILE="$SOURCE_ROOT_DIR/$GUI_CONTEXT_FILE"
                 ./create_context.sh
-                export GUI_CONTEXT_FILE=$CONTEXT_FILE
 
-                export TEST_REQUIREMENTS_FILE="${WORKSPACE}/integration_testing_requirements.md"
+                export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" || echo "No test_requirements.md found.")
 
                 ./ongoing_printer.sh \
                 /usr/local/bin/mcphost \
