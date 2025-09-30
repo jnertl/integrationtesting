@@ -150,6 +150,11 @@ pipeline {
             '''
 
             archiveArtifacts(
+                artifacts: 'integration_testing_requirements.md',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
+            archiveArtifacts(
                 artifacts: 'test_results.log',
                 fingerprint: true,
                 allowEmptyArchive: true
