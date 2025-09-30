@@ -132,7 +132,7 @@ Received RPM: 2749, TEMP: 71, OIL PRESSURE: 54
     post {
         always {
             sh '''
-                echo 'Test failed. Executing failure handler...'
+                echo 'Analysing failure...'
                 rm -fr mcpdemo || true
                 git clone --single-branch --branch main https://github.com/jnertl/mcpdemo.git
                 cd mcpdemo
@@ -143,10 +143,6 @@ Received RPM: 2749, TEMP: 71, OIL PRESSURE: 54
                 export GUI_LOG=$(cat "${WORKSPACE}/mwclientwithgui.log")
                 export TEST_RESULTS_LOG=$(cat "${WORKSPACE}/test_results.log" || echo "No test_results.log found.")
                 
-                echo "MW_LOG: $MW_LOG"
-                echo "GUI_LOG: $GUI_LOG"
-                echo "TEST_RESULTS_LOG: $TEST_RESULTS_LOG"
-
                 # Set up middleware context for analysis
                 export SOURCE_DIR="$SOURCE_ROOT_DIR/middlewaresw"
                 export CONTEXT_FILE="$SOURCE_ROOT_DIR/mw_src_context.txt"
@@ -168,8 +164,15 @@ Received RPM: 2749, TEMP: 71, OIL PRESSURE: 54
                 --system-prompt ./system_prompts/jenkins_results_assistant.txt \
                 script user_prompts/analyse_failed_integration_test.sh \
                 >&1 | tee $WORKSPACE/failure_analysis.txt
+
+                echo 'Analysing failure completed.'
             '''
 
+            archiveArtifacts(
+                artifacts: 'test_results.log',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
             archiveArtifacts(
                 artifacts: 'middlewaresw.log',
                 fingerprint: true,
