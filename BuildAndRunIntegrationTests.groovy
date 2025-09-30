@@ -44,17 +44,18 @@ pipeline {
 
                     # Start middlewaresw in the background
                     cd "${git_checkout_root}/middlewaresw"
-                    build_application/middlewaresw 100 > "${WORKSPACE}/middlewaresw.log" 2>&1 &
+                    build_application/middlewaresw 100 2>&1 | tee "${WORKSPACE}/middlewaresw.log" &
                     MIDDLEWARESW_PID=$!
                     echo "Started middlewaresw with PID $MIDDLEWARESW_PID"
 
                     # Start mwclientwithgui in the background
                     cd "${git_checkout_root}/mwclientwithgui"
                     export UV_VENV_CLEAR=1
-                    /root/.local/bin/uv venv mcpdemo_venv
-                    . mcpdemo_venv/bin/activate
+                    rm -fr gui_venv || true
+                    /root/.local/bin/uv venv gui_venv
+                    . gui_venv/bin/activate
                     /root/.local/bin/uv pip install -r requirements.txt
-                    xvfb-run python mw_gui_client.py > "${WORKSPACE}/mwclientwithgui.log" 2>&1 &
+                    QT_QPA_PLATFORM=offscreen python mw_gui_client.py "${WORKSPACE}/mwclientwithgui.log" &
                     MWCLIENTWITHGUI_PID=$!
                     echo "Started mwclientwithgui with PID $MWCLIENTWITHGUI_PID"
 
