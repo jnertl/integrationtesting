@@ -24,7 +24,7 @@ pipeline {
             steps {
                 sh '''
                     echo "Making middlewaresw crash"
-                    sed -i 's/^static const bool crashEnabled = false$/static const bool crashEnabled = true/' "${git_checkout_root}/middlewaresw/src/Engine.cpp"
+                    sed -i 's/^static const bool crashEnabled *= *false.*/static const bool crashEnabled = true;/' "${git_checkout_root}/middlewaresw/src/Engine.cpp"
 
                 '''
             }
