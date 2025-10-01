@@ -168,14 +168,14 @@ pipeline {
                 --temperature 0.1 --top-p 0.8 --top-k 50 --max-tokens 4096 \
                 --quiet --stream=false \
                 --system-prompt ./system_prompts/jenkins_results_assistant.txt \
-                script user_prompts/analyse_failed_integration_test.sh \
+                script user_prompts/analyse_crash.sh \
                 >&1 | tee $WORKSPACE/failure_analysis.txt
 
                 echo 'Analysing completed.'
             '''
 
             archiveArtifacts(
-                artifacts: 'mcpdemo/user_prompts/analyse_failed_integration_test.sh',
+                artifacts: 'mcpdemo/user_prompts/analyse_crash.sh',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
