@@ -101,8 +101,8 @@ pipeline {
                     if [ $? -eq 0 ]; then
                         echo "TEST FAILED: Segfault detected in dmesg." | tee -a "${WORKSPACE}/test_results.log"
                         echo "Generating backtrace..." | tee -a "${WORKSPACE}/test_results.log"
-                        cd "${git_checkout_root}/middlewaresw/build_application"
-                        gdb -batch -ex "bt" -ex "quit" middlewaresw core | tee -a "${WORKSPACE}/test_results.log"
+                        cd "${git_checkout_root}/middlewaresw/"
+                        gdb -batch -ex "bt" -ex "quit" build_application/middlewaresw core | tee -a "${WORKSPACE}/test_results.log"
                     fi
 
                     # Terminate both processes
