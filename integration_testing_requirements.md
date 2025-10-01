@@ -21,3 +21,6 @@
 
 ## 5. Reporting
 - All test results, including failures and detected crashes, must be clearly reported in the test logs.
+
+## 6. Test Framework
+- All integration tests must be implemented using the Robot Framework to ensure consistency and maintainability.

@@ -13,10 +13,13 @@ pipeline {
                     cd "${git_checkout_root}"
                     git clone --single-branch --branch main https://github.com/jnertl/middlewaresw.git
                     git clone --single-branch --branch main https://github.com/jnertl/mwclientwithgui.git
+                    git clone --single-branch --branch main https://github.com/jnertl/testframework.git
                     echo "middlewaresw"
                     git --no-pager -C middlewaresw/ show --summary
                     echo "mwclientwithgui"
                     git --no-pager -C mwclientwithgui/ show --summary
+                    echo "testframework"
+                    git --no-pager -C testframework/ show --summary
                 '''
             }
         }
@@ -34,61 +37,29 @@ pipeline {
                     rm -fr "${WORKSPACE}/middlewaresw.log" || true
                     rm -fr "${WORKSPACE}/mwclientwithgui.log" || true
                     rm -fr "${WORKSPACE}/test_results.log" || true
+                    rm -fr "${WORKSPACE}/results" || true
+                '''
+            }
+        }
+        stage('Install robot framework') {
+            steps {
+                sh '''
+                    cd "${git_checkout_root}/testframework"
+                    export UV_VENV_CLEAR=1
+                    rm -fr robot_venv || true
+                    /root/.local/bin/uv venv robot_venv
+                    . robot_venv/bin/activate
+                    /root/.local/bin/uv pip install -r robot_framework_requirements.txt
+                    robot --version
                 '''
             }
         }
         stage('Run integration tests') {
             steps {
                 sh '''
-                    # Make sure no old instances are running
-                    pkill middlewaresw || true
-
-                    # Start middlewaresw in the background
-                    cd "${git_checkout_root}/middlewaresw"
-                    build_application/middlewaresw 1000 2>&1 | tee "${WORKSPACE}/middlewaresw.log" &
-                    MIDDLEWARESW_PID=$!
-                    echo "Started middlewaresw with PID $MIDDLEWARESW_PID"
-
-                    # Start mwclientwithgui in the background
-                    cd "${git_checkout_root}/mwclientwithgui"
-                    export UV_VENV_CLEAR=1
-                    rm -fr gui_venv || true
-                    /root/.local/bin/uv venv gui_venv
-                    . gui_venv/bin/activate
-                    /root/.local/bin/uv pip install -r requirements.txt
-                    QT_QPA_PLATFORM=offscreen python mw_gui_client.py "${WORKSPACE}/mwclientwithgui.log" &
-                    MWCLIENTWITHGUI_PID=$!
-                    echo "Started mwclientwithgui with PID $MWCLIENTWITHGUI_PID"
-
-                    echo "Waiting 5 seconds before next check..."
-                    sleep 5
-
-                    # Check if middlewaresw is running
-                    MW_SW_FAILED=0
-                    if kill -0 $MIDDLEWARESW_PID 2>/dev/null; then
-                        echo "Process MIDDLEWARESW_PID ($MIDDLEWARESW_PID) is still running."
-                    else
-                        echo "TEST FAILED: Process MIDDLEWARESW_PID ($MIDDLEWARESW_PID) is not running." | tee -a "${WORKSPACE}/test_results.log"
-                        MW_SW_FAILED=1
-                    fi
-
-                    # Check if mwclientwithgui is running
-                    MW_CLIENT_FAILED=0
-                    if kill -0 $MWCLIENTWITHGUI_PID 2>/dev/null; then
-                        echo "Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is still running."
-                    else
-                        echo "TEST FAILED: Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is not running." | tee -a "${WORKSPACE}/test_results.log"
-                        MW_CLIENT_FAILED=1
-                    fi
-
-                    # Terminate both processes
-                    kill -9 $MIDDLEWARESW_PID || true
-                    kill -9 $MWCLIENTWITHGUI_PID || true
-
-                    # Only exit after both checks
-                    if [ $MW_SW_FAILED -ne 0 ] || [ $MW_CLIENT_FAILED -ne 0 ]; then
-                        echo "TEST FAILED: One of the expected processes is not running." | tee -a "${WORKSPACE}/test_results.log"
-                    fi
+                    cd "${git_checkout_root}/testframework"
+                    . robot_venv/bin/activate
+                    scripts/run_tests.sh -i integration -o "${WORKSPACE}/results"
                 '''
             }
         }
@@ -121,6 +92,11 @@ pipeline {
     }
     post {
         always {
+            archiveArtifacts(
+                artifacts: 'results/*',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
             archiveArtifacts(
                 artifacts: 'test_results.log',
                 fingerprint: true,
