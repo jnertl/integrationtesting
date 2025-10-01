@@ -150,6 +150,16 @@ pipeline {
             '''
 
             archiveArtifacts(
+                artifacts: 'mcpdemo/user_prompts/analyse_failed_integration_test.sh',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
+            archiveArtifacts(
+                artifacts: 'mcpdemo/system_prompts/jenkins_results_assistant.txt',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
+            archiveArtifacts(
                 artifacts: 'integration_testing_requirements.md',
                 fingerprint: true,
                 allowEmptyArchive: true
