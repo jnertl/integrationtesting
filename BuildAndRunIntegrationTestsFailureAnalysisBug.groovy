@@ -54,9 +54,11 @@ pipeline {
 
                     # Clear dmesg to capture only relevant crash info later
                     dmesg -C
+
                     # Allow core dumps
                     echo "core" > /proc/sys/kernel/core_pattern
                     ulimit -c unlimited
+                    rm -f "${git_checkout_root}/middlewaresw/core.*" || true
 
                     # Start middlewaresw in the background
                     cd "${git_checkout_root}/middlewaresw"
@@ -102,7 +104,7 @@ pipeline {
                         echo "TEST FAILED: Segfault detected in dmesg." | tee -a "${WORKSPACE}/test_results.log"
                         echo "Generating backtrace..." | tee -a "${WORKSPACE}/test_results.log"
                         cd "${git_checkout_root}/middlewaresw/"
-                        gdb -batch -ex "bt" -ex "quit" build_application/middlewaresw core | tee -a "${WORKSPACE}/test_results.log"
+                        gdb -batch -ex "bt" -ex "quit" build_application/middlewaresw core* | tee -a "${WORKSPACE}/test_results.log"
                     fi
 
                     # Terminate both processes
@@ -144,12 +146,20 @@ pipeline {
                 export SOURCE_DIR="$SOURCE_ROOT_DIR/middlewaresw"
                 export CONTEXT_FILE="$SOURCE_ROOT_DIR/$MW_CONTEXT_FILE"
                 ./create_context.sh
+                if [ ! -f "$CONTEXT_FILE" ]; then
+                    echo "ERROR: CONTEXT_FILE $CONTEXT_FILE does not exist after create_context.sh" >&2
+                    exit 1
+                fi
 
                 # Set up gui client context for analysis
                 export GUI_CONTEXT_FILE=gui_src_context.txt
                 export SOURCE_DIR="$SOURCE_ROOT_DIR/mwclientwithgui"
                 export CONTEXT_FILE="$SOURCE_ROOT_DIR/$GUI_CONTEXT_FILE"
                 ./create_context.sh
+                if [ ! -f "$CONTEXT_FILE" ]; then
+                    echo "ERROR: CONTEXT_FILE $CONTEXT_FILE does not exist after create_context.sh" >&2
+                    exit 1
+                fi
 
                 export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" || echo "No test_requirements.md found.")
 
