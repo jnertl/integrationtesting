@@ -59,8 +59,24 @@ pipeline {
                 sh '''
                     cd "${git_checkout_root}/testframework"
                     . robot_venv/bin/activate
-                    scripts/run_tests.sh -i integration -o "${WORKSPACE}/results"
+                    scripts/run_tests.sh -i integration -o "${WORKSPACE}/results" || true
                 '''
+            }
+        }
+        stage('Display results') {
+            steps {
+                step {
+                    robot(outputPath: "results",
+                        passThreshold: 90.0,
+                        unstableThreshold: 70.0,
+                        disableArchiveOutput: true,
+                        outputFileName: "output.xml",
+                        logFileName: 'log.html',
+                        reportFileName: 'report.html',
+                        countSkippedTests: true,    // Optional, defaults to false
+                        otherFiles: 'screenshot-*.png'
+                    )
+                }
             }
         }
         stage('Analyse results') {
