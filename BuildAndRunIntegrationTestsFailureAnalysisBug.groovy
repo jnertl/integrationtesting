@@ -52,6 +52,9 @@ pipeline {
                     # Make sure no old instances are running
                     pkill middlewaresw || true
 
+                    # Clear dmesg to capture only relevant crash info later
+                    dmesg -C
+
                     # Start middlewaresw in the background
                     cd "${git_checkout_root}/middlewaresw"
                     build_application/middlewaresw 1000 2>&1 | tee "${WORKSPACE}/middlewaresw.log" &
@@ -89,6 +92,9 @@ pipeline {
                         echo "TEST FAILED: Process MWCLIENTWITHGUI_PID ($MWCLIENTWITHGUI_PID) is not running." | tee -a "${WORKSPACE}/test_results.log"
                         MW_CLIENT_FAILED=1
                     fi
+
+                    echo "Checking dmesg for segfaults..."
+                    dmesg | grep -i segfault | tee -a "${WORKSPACE}/test_results.log"
 
                     # Terminate both processes
                     kill -9 $MIDDLEWARESW_PID || true
