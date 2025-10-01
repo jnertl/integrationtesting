@@ -54,6 +54,9 @@ pipeline {
 
                     # Clear dmesg to capture only relevant crash info later
                     dmesg -C
+                    # Allow core dumps
+                    echo "core" > /proc/sys/kernel/core_pattern
+                    ulimit -c unlimited
 
                     # Start middlewaresw in the background
                     cd "${git_checkout_root}/middlewaresw"
@@ -95,12 +98,18 @@ pipeline {
 
                     echo "Checking dmesg for segfaults..."
                     dmesg | grep -i segfault | tee -a "${WORKSPACE}/test_results.log"
+                    if [ $? -eq 0 ]; then
+                        echo "TEST FAILED: Segfault detected in dmesg." | tee -a "${WORKSPACE}/test_results.log"
+                        echo "Generating backtrace..." | tee -a "${WORKSPACE}/test_results.log"
+                        cd "${git_checkout_root}/middlewaresw/build_application"
+                        gdb -batch -ex "bt" -ex "quit" middlewaresw core | tee -a "${WORKSPACE}/test_results.log"
+                    fi
 
                     # Terminate both processes
                     kill -9 $MIDDLEWARESW_PID || true
                     kill -9 $MWCLIENTWITHGUI_PID || true
 
-                    # Only exit after both checks
+                    # Final test result
                     if [ $MW_SW_FAILED -ne 0 ] || [ $MW_CLIENT_FAILED -ne 0 ]; then
                         echo "TEST FAILED: One of the expected processes is not running." | tee -a "${WORKSPACE}/test_results.log"
                     fi
