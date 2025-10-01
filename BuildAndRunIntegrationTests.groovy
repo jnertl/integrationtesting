@@ -49,7 +49,7 @@ pipeline {
                     rm -fr robot_venv || true
                     /root/.local/bin/uv venv robot_venv
                     . robot_venv/bin/activate
-                    /root/.local/bin/uv pip install -r robot_framework_requirements.txt
+                    /root/.local/bin/uv pip install -r requirements.txt
                     robot --version
                 '''
             }
