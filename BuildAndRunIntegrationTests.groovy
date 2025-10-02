@@ -36,8 +36,9 @@ pipeline {
                 sh '''
                     rm -fr "${WORKSPACE}/middlewaresw.log" || true
                     rm -fr "${WORKSPACE}/mwclientwithgui.log" || true
-                    rm -fr "${WORKSPACE}/test_results.log" || true
+                    rm -fr "${WORKSPACE}/mwclientwithgui_process" || true
                     rm -fr "${WORKSPACE}/results" || true
+                    rm -fr "${WORKSPACE}/robot_results.zip" || true
                 '''
             }
         }
@@ -63,6 +64,7 @@ pipeline {
                     export MW_CLIENT_PATH="${git_checkout_root}/mwclientwithgui"
                     export MW_LOG_OUTPUT_FILE="${WORKSPACE}/middlewaresw.log"
                     export MW_CLIENT_LOG_OUTPUT_FILE="${WORKSPACE}/mwclientwithgui.log"
+                    export MW_CLIENT_PROCESS_OUTPUT_FILE="${WORKSPACE}/mwclientwithgui_process.log"
                     scripts/run_tests.sh -i integration -o "${WORKSPACE}/results" || true
                     zip -r -j "${WORKSPACE}/robot_results.zip" "${WORKSPACE}/results" || true
                 '''
@@ -106,7 +108,7 @@ pipeline {
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'mw_gui_client_process.log',
+                artifacts: 'mwclientwithgui_process',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
