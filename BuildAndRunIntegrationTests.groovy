@@ -61,9 +61,9 @@ pipeline {
                     . robot_venv/bin/activate
                     export MW_SW_BIN_PATH="${git_checkout_root}/middlewaresw/build_application"
                     export MW_CLIENT_PATH="${git_checkout_root}/mwclientwithgui"
+                    export MW_LOG_OUTPUT_FILE="${WORKSPACE}/middlewaresw.log"
+                    export MW_CLIENT_LOG_OUTPUT_FILE="${WORKSPACE}/mwclientwithgui.log"
                     scripts/run_tests.sh -i integration -o "${WORKSPACE}/results" || true
-                    cp "${git_checkout_root}/testframework/middlewaresw.log" "${WORKSPACE}" || true
-                    cp "${git_checkout_root}/testframework/mw_gui_client_process.log" "${WORKSPACE}" || true
                     zip -r -j "${WORKSPACE}/robot_results.zip" "${WORKSPACE}/results" || true
                 '''
             }
@@ -86,6 +86,11 @@ pipeline {
     post {
         always {
             archiveArtifacts(
+                artifacts: 'results/*',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
+            archiveArtifacts(
                 artifacts: 'robot_results.zip',
                 fingerprint: true,
                 allowEmptyArchive: true
@@ -97,6 +102,11 @@ pipeline {
             )
             archiveArtifacts(
                 artifacts: 'mwclientwithgui.log',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
+            archiveArtifacts(
+                artifacts: 'mw_gui_client_process.log',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
