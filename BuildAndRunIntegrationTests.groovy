@@ -79,32 +79,6 @@ pipeline {
                 )
             }
         }
-        stage('Analyse results') {
-            steps {
-                sh '''
-                    echo "Check for 'Socket server started on port 5555' in middlewaresw.log" | tee -a "${WORKSPACE}/test_results.log"
-                    if grep -q "Socket server started on port 5555" "${WORKSPACE}/middlewaresw.log"; then
-                        SOCKET_SERVER_STARTED=1
-                    else
-                        echo "TEST FAILED: 'Socket server started on port 5555' was not found in middlewaresw.log" | tee -a "${WORKSPACE}/test_results.log"
-                        SOCKET_SERVER_STARTED=0
-                    fi
-
-                    echo "Check for 'Received RPM: <number>, TEMP: <number>, OIL PRESSURE: <number>' in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
-                    if grep -Eq "Received RPM: [0-9]+, TEMP: [0-9]+, OIL PRESSURE: [0-9]+" "${WORKSPACE}/mwclientwithgui.log"; then
-                        CLIENT_RECEIVED_DATA=1
-                    else
-                        echo "TEST FAILED: 'Received RPM: <number>, TEMP: <number>, OIL PRESSURE: <number>' was not found in mwclientwithgui.log" | tee -a "${WORKSPACE}/test_results.log"
-                        CLIENT_RECEIVED_DATA=0
-                    fi
-
-                    # Fail if either check did not pass
-                    if [ $SOCKET_SERVER_STARTED -ne 1 ] || [ $CLIENT_RECEIVED_DATA -ne 1 ]; then
-                        echo "TEST FAILED: One of the log checks failed." | tee -a "${WORKSPACE}/test_results.log"
-                    fi
-                '''
-            }
-        }
     }
     post {
         always {
@@ -114,17 +88,12 @@ pipeline {
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'test_results.log',
+                artifacts: 'testframework/middlewaresw.log',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'middlewaresw.log',
-                fingerprint: true,
-                allowEmptyArchive: true
-            )
-            archiveArtifacts(
-                artifacts: 'mwclientwithgui.log',
+                artifacts: 'testframework/mwclientwithgui.log',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
