@@ -59,6 +59,8 @@ pipeline {
                 sh '''
                     cd "${git_checkout_root}/testframework"
                     . robot_venv/bin/activate
+                    export MW_SW_BIN_PATH="${git_checkout_root}/middlewaresw/build_application"
+                    export MW_CLIENT_PATH="${git_checkout_root}/mwclientwithgui"
                     scripts/run_tests.sh -i integration -o "${WORKSPACE}/results" || true
                 '''
             }
