@@ -36,7 +36,7 @@ pipeline {
                 sh '''
                     rm -fr "${WORKSPACE}/middlewaresw.log" || true
                     rm -fr "${WORKSPACE}/mwclientwithgui.log" || true
-                    rm -fr "${WORKSPACE}/mwclientwithgui_process" || true
+                    rm -fr "${WORKSPACE}/mwclientwithgui_process.log" || true
                     rm -fr "${WORKSPACE}/results" || true
                     rm -fr "${WORKSPACE}/robot_results.zip" || true
                 '''
@@ -108,7 +108,7 @@ pipeline {
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'mwclientwithgui_process',
+                artifacts: 'mwclientwithgui_process.log',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
