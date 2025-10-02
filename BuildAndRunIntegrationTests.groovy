@@ -62,6 +62,8 @@ pipeline {
                     export MW_SW_BIN_PATH="${git_checkout_root}/middlewaresw/build_application"
                     export MW_CLIENT_PATH="${git_checkout_root}/mwclientwithgui"
                     scripts/run_tests.sh -i integration -o "${WORKSPACE}/results" || true
+                    cp "${git_checkout_root}/testframework/middlewaresw.log" "${WORKSPACE}" || true
+                    cp "${git_checkout_root}/testframework/mwclientwithgui.log" "${WORKSPACE}" || true
                 '''
             }
         }
@@ -88,12 +90,12 @@ pipeline {
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'testframework/middlewaresw.log',
+                artifacts: 'middlewaresw.log',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'testframework/mwclientwithgui.log',
+                artifacts: 'mwclientwithgui.log',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
