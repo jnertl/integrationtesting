@@ -63,7 +63,8 @@ pipeline {
                     export MW_CLIENT_PATH="${git_checkout_root}/mwclientwithgui"
                     scripts/run_tests.sh -i integration -o "${WORKSPACE}/results" || true
                     cp "${git_checkout_root}/testframework/middlewaresw.log" "${WORKSPACE}" || true
-                    cp "${git_checkout_root}/testframework/mwclientwithgui.log" "${WORKSPACE}" || true
+                    cp "${git_checkout_root}/testframework/mw_gui_client_process.log" "${WORKSPACE}" || true
+                    zip -r -j "${WORKSPACE}/robot_results.zip" "${WORKSPACE}/results" || true
                 '''
             }
         }
@@ -85,7 +86,7 @@ pipeline {
     post {
         always {
             archiveArtifacts(
-                artifacts: 'results/*',
+                artifacts: 'robot_results.zip',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
