@@ -25,7 +25,8 @@ Requirement [INTTEST005]
   Oil Pressure (`oil_pressure`) values in logs must be within the range 0 to 200.
 
 ## 5. Reporting
-- All test results, including failures and detected crashes, must be clearly reported in the test logs.
+- Requirement [INTTEST006]
+  All test results, including failures and detected crashes, must be clearly reported in the test logs.
 
 ## 6. Test Framework
 - All integration tests must be implemented using the Robot Framework to ensure consistency and maintainability.
