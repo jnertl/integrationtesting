@@ -10,9 +10,11 @@ mcpServers:
 
 model: "${env://MODEL:-ollama:llama3.2:3b}"
 ---
-Source code context files:
-- Middleware source file: ${env://CPP_CONTEXT_FILE}
-- mwclientwithgui source file: ${env://PYTHON_CONTEXT_FILE}
+Middleware (server) source code context file:
+- ${env://CPP_CONTEXT_FILE}
+
+mwclientwithgui (client)source code context file:
+- ${env://PYTHON_CONTEXT_FILE}
 
 Test case context file:
 - ${env://TEST_CONTEXT_FILE}
@@ -20,5 +22,5 @@ Test case context file:
 Integration testing requirements are as follows:
 ${env://TEST_REQUIREMENTS}
 
-Prompt for analysis:
+My question is:
 ${env://AI_PROMPT}
