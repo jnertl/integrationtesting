@@ -57,10 +57,11 @@ pipeline {
 
                     export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" || echo "No test_requirements.md found.")
 
-                    echo $AI_PROMPT > prompt.txt
                     AI_MODEL=$MODEL
+                    echo $MODEL > prompt.txt
+                    echo $AI_PROMPT >> prompt.txt
                     echo "**********************************"
-                    echo "Using model: $AI_MODEL"
+                    echo "Using model: ${AI_MODEL}"
                     echo "**********************************"
 
                     bash "$SOURCE_ROOT_DIR/testframework/scripts/ongoing_printer.sh" \
