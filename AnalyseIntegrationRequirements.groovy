@@ -88,12 +88,12 @@ pipeline {
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'mcpdemo/user_prompts/analyse_requirements.sh',
+                artifacts: 'user_prompts/analyse_requirements.sh',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'mcpdemo/system_prompts/requirements_assistant.txt',
+                artifacts: 'system_prompts/requirements_assistant.txt',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
