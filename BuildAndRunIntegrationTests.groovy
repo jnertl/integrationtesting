@@ -4,6 +4,19 @@ pipeline {
         git_checkout_root = '/var/jenkins_home/workspace/integration_test_failure_analysis_git_checkout'
     }
     stages {
+        stage('temp') {
+            steps {
+                echo "INCLUDE_TAG_PARAMS: ${INCLUDE_TAG_PARAMS}"
+                script {
+                    if (!INCLUDE_TAG_PARAMS?.trim()) {
+                        echo "INCLUDE_TAG_PARAMS is empty"
+                    } else {
+                        echo "INCLUDE_TAG_PARAMS is not empty"
+                    }
+                }
+                exit 1
+            }
+        }
         stage('Checkout') {
             steps {
                 sh '''
