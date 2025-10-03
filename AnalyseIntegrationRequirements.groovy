@@ -57,6 +57,8 @@ pipeline {
 
                     export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" || echo "No test_requirements.md found.")
 
+                    echo $AI_PROMPT > prompt.txt
+
                     bash "$SOURCE_ROOT_DIR/testframework/scripts/ongoing_printer.sh" \
                     /usr/local/bin/mcphost \
                     --temperature 0.1 --top-p 0.8 --top-k 50 --max-tokens 4096 \
@@ -72,6 +74,11 @@ pipeline {
     }
     post {
         always {
+            archiveArtifacts(
+                artifacts: 'prompt.txt',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
             archiveArtifacts(
                 artifacts: 'mw_src_context.txt',
                 fingerprint: true,
