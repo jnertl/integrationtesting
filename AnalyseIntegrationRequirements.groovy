@@ -80,21 +80,6 @@ pipeline {
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'mw_src_context.txt',
-                fingerprint: true,
-                allowEmptyArchive: true
-            )
-            archiveArtifacts(
-                artifacts: 'gui_src_context.txt',
-                fingerprint: true,
-                allowEmptyArchive: true
-            )
-            archiveArtifacts(
-                artifacts: 'test_src_context.txt',
-                fingerprint: true,
-                allowEmptyArchive: true
-            )
-            archiveArtifacts(
                 artifacts: 'user_prompts/analyse_requirements.sh',
                 fingerprint: true,
                 allowEmptyArchive: true

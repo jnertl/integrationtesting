@@ -11,8 +11,8 @@ mcpServers:
 model: "${env://MODEL:-ollama:llama3.2:3b}"
 ---
 Source code context files:
-- Middleware source file: ${env://MW_CONTEXT_FILE}
-- mwclientwithgui source file: ${env://GUI_CONTEXT_FILE}
+- Middleware source file: ${env://CPP_CONTEXT_FILE}
+- mwclientwithgui source file: ${env://PYTHON_CONTEXT_FILE}
 
 Test case context file:
 - ${env://TEST_CONTEXT_FILE}
