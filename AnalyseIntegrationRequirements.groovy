@@ -50,13 +50,12 @@ pipeline {
                     #bash "$SOURCE_ROOT_DIR/testframework/scripts/create_python_context.sh"
 
                     # Set up test case context for analysis
-                    export TEST_CONTEXT_FILE=test_src_context.txt
-                    export SOURCE_DIR="$SOURCE_ROOT_DIR/testframework"
-                    export ROBOT_CONTEXT_FILE="$SOURCE_ROOT_DIR/$TEST_CONTEXT_FILE"
-                    bash "$SOURCE_ROOT_DIR/testframework/scripts/create_robot_context.sh"
-                    export TEST_SOURCE_CODE=$(cat "$ROBOT_CONTEXT_FILE" || echo "No test source code context found.")
+                    #export TEST_CONTEXT_FILE=test_src_context.txt
+                    #export SOURCE_DIR="$SOURCE_ROOT_DIR/testframework"
+                    #export ROBOT_CONTEXT_FILE="$SOURCE_ROOT_DIR/$TEST_CONTEXT_FILE"
+                    #bash "$SOURCE_ROOT_DIR/testframework/scripts/create_robot_context.sh"
                     
-                    export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" || echo "No test_requirements.md found.")
+                    export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" 2>/dev/null || echo "No test_requirements.md found.") > /dev/null
 
                     MODEL=${AI_MODEL}
                     echo "Model in use: ${MODEL}" > prompt.txt
