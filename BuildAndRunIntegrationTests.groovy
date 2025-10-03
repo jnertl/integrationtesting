@@ -4,19 +4,6 @@ pipeline {
         git_checkout_root = '/var/jenkins_home/workspace/integration_test_failure_analysis_git_checkout'
     }
     stages {
-        stage('temp') {
-            steps {
-                echo "INCLUDE_TAG_PARAMS: ${INCLUDE_TAG_PARAMS}"
-                script {
-                    if (!INCLUDE_TAG_PARAMS?.trim()) {
-                        echo "INCLUDE_TAG_PARAMS is empty"
-                    } else {
-                        echo "INCLUDE_TAG_PARAMS is not empty"
-                    }
-                }
-                exit 1
-            }
-        }
         stage('Checkout') {
             steps {
                 sh '''
@@ -78,7 +65,15 @@ pipeline {
                     export MW_LOG_OUTPUT_FILE="${WORKSPACE}/middlewaresw.log"
                     export MW_CLIENT_LOG_OUTPUT_FILE="${WORKSPACE}/mwclientwithgui.log"
                     export MW_CLIENT_PROCESS_OUTPUT_FILE="${WORKSPACE}/mwclientwithgui_process.log"
-                    scripts/run_tests.sh -i integration -o "${WORKSPACE}/results" || true
+
+                    includeTags="integration"
+                    if (INCLUDE_TAG_PARAMS?.trim()) {
+                        includeTags=${INCLUDE_TAG_PARAMS}
+                    }
+
+                    echo "Using includeTags: ${includeTags}"
+                    scripts/run_tests.sh -i ${includeTags} -o "${WORKSPACE}/results" || true
+
                     zip -r -j "${WORKSPACE}/robot_results.zip" "${WORKSPACE}/results" || true
                 '''
             }
