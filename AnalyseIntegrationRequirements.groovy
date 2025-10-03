@@ -58,7 +58,7 @@ pipeline {
                     export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" || echo "No test_requirements.md found.")
 
                     echo $AI_PROMPT > prompt.txt
-                    $AI_MODEL=$MODEL
+                    AI_MODEL=$MODEL
                     echo "**********************************"
                     echo "Using model: $AI_MODEL"
                     echo "**********************************"
