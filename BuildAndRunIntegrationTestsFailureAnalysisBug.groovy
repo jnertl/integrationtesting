@@ -70,9 +70,9 @@ pipeline {
                     cd "${git_checkout_root}/mwclientwithgui"
                     export UV_VENV_CLEAR=1
                     rm -fr gui_venv || true
-                    /root/.local/bin/uv venv gui_venv
+                    ~/.local/bin/uv venv gui_venv
                     . gui_venv/bin/activate
-                    /root/.local/bin/uv pip install -r requirements.txt
+                    ~/.local/bin/uv pip install -r requirements.txt
                     QT_QPA_PLATFORM=offscreen python mw_gui_client.py "${WORKSPACE}/mwclientwithgui.log" &
                     MWCLIENTWITHGUI_PID=$!
                     echo "Started mwclientwithgui with PID $MWCLIENTWITHGUI_PID"

@@ -48,9 +48,9 @@ pipeline {
                     cd "${git_checkout_root}/testframework"
                     export UV_VENV_CLEAR=1
                     rm -fr robot_venv || true
-                    /root/.local/bin/uv venv robot_venv
+                    ~/.local/bin/uv venv robot_venv
                     . robot_venv/bin/activate
-                    /root/.local/bin/uv pip install -r requirements.txt --link-mode=copy
+                    ~/.local/bin/uv pip install -r requirements.txt --link-mode=copy
                     robot --version || true
                 '''
             }
