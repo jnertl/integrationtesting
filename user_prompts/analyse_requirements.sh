@@ -13,7 +13,7 @@ model: "${env://MODEL:-ollama:llama3.2:3b}"
 Middleware (server) source code context file:
 - ${env://CPP_CONTEXT_FILE}
 
-mwclientwithgui (client)source code context file:
+mwclientwithgui (client) source code context file:
 - ${env://PYTHON_CONTEXT_FILE}
 
 Test case context file:
