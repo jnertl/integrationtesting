@@ -2,6 +2,8 @@
 
 # Integration Testing Requirements
 
+To run all test use test tag: integration
+
 ## 1. Test Coverage
 - Integration tests must cover all major workflows and interactions between system components.
 - Tests should validate both data flow and API interactions across component boundaries.
