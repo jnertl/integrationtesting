@@ -67,8 +67,8 @@ pipeline {
                     export MW_CLIENT_PROCESS_OUTPUT_FILE="${WORKSPACE}/mwclientwithgui_process.log"
 
                     includeTags="integration"
-                    if [[ -n "${INCLUDE_TAG_PARAMS// }" ]]; then
-                        includeTags="${INCLUDE_TAG_PARAMS}"
+                    if [ -n "$INCLUDE_TAG_PARAMS" ]; then
+                        includeTags="$INCLUDE_TAG_PARAMS"
                     fi
 
                     echo "Using includeTags: ${includeTags}"
