@@ -38,22 +38,22 @@ pipeline {
                     export SOURCE_ROOT_DIR="$git_checkout_root"
                     
                     # Set up middleware context for analysis
-                    export MW_CONTEXT_FILE=mw_src_context.txt
-                    export SOURCE_DIR="$SOURCE_ROOT_DIR/middlewaresw"
-                    export CPP_CONTEXT_FILE="$SOURCE_ROOT_DIR/$MW_CONTEXT_FILE"
-                    bash "$SOURCE_ROOT_DIR/testframework/scripts/create_cpp_context.sh"
+                    #export MW_CONTEXT_FILE=mw_src_context.txt
+                    #export SOURCE_DIR="$SOURCE_ROOT_DIR/middlewaresw"
+                    #export CPP_CONTEXT_FILE="$SOURCE_ROOT_DIR/$MW_CONTEXT_FILE"
+                    #bash "$SOURCE_ROOT_DIR/testframework/scripts/create_cpp_context.sh"
 
                     # Set up gui client context for analysis
-                    export GUI_CONTEXT_FILE=gui_src_context.txt
-                    export SOURCE_DIR="$SOURCE_ROOT_DIR/mwclientwithgui"
-                    export PYTHON_CONTEXT_FILE="$SOURCE_ROOT_DIR/$GUI_CONTEXT_FILE"
-                    bash "$SOURCE_ROOT_DIR/testframework/scripts/create_python_context.sh"
+                    #export GUI_CONTEXT_FILE=gui_src_context.txt
+                    #export SOURCE_DIR="$SOURCE_ROOT_DIR/mwclientwithgui"
+                    #export PYTHON_CONTEXT_FILE="$SOURCE_ROOT_DIR/$GUI_CONTEXT_FILE"
+                    #bash "$SOURCE_ROOT_DIR/testframework/scripts/create_python_context.sh"
 
                     # Set up test case context for analysis
-                    export TEST_CONTEXT_FILE=test_src_context.txt
-                    export SOURCE_DIR="$SOURCE_ROOT_DIR/testframework"
-                    export ROBOT_CONTEXT_FILE="$SOURCE_ROOT_DIR/$TEST_CONTEXT_FILE"
-                    bash "$SOURCE_ROOT_DIR/testframework/scripts/create_robot_context.sh"
+                    #export TEST_CONTEXT_FILE=test_src_context.txt
+                    #export SOURCE_DIR="$SOURCE_ROOT_DIR/testframework"
+                    #export ROBOT_CONTEXT_FILE="$SOURCE_ROOT_DIR/$TEST_CONTEXT_FILE"
+                    #bash "$SOURCE_ROOT_DIR/testframework/scripts/create_robot_context.sh"
 
                     export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" || echo "No test_requirements.md found.")
 
