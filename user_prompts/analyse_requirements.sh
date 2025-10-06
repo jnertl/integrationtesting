@@ -2,11 +2,8 @@
 ---
 mcpServers:
   filesystem:
-    type: "builtin"
-    name: "fs"
-    options:
-      allowed_directories: [${env://SOURCE_ROOT_DIR}]
-      max_results: 100000
+    type: "local"
+    command: ["npx", "-y", "@modelcontextprotocol/server-filesystem", "${env://SOURCE_ROOT_DIR:-/tmp}"]
 
 model: "${env://MODEL:-ollama:llama3.2:3b}"
 ---

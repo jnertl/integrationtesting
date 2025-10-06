@@ -62,6 +62,7 @@ pipeline {
                     export OLLAMA_HOST=http://10.0.2.2:11434
                     echo "Model in use: ${MODEL}" > prompt.txt
                     echo "Ollama host: ${OLLAMA_HOST}" >> prompt.txt
+                    echo "Source root directory: ${SOURCE_ROOT_DIR}" >> prompt.txt
                     echo "Test source code directory: ${TEST_SOURCE_CODE}\n\n" >> prompt.txt
                     echo "${AI_PROMPT}" >> prompt.txt
                     echo "**********************************"
