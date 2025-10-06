@@ -54,10 +54,10 @@ pipeline {
                     export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" 2>/dev/null || echo "No test_requirements.md found.") > /dev/null
 
                     if [ -n "$TEST_RESULTS_FOLDER" ] && [ "$TEST_RESULTS_FOLDER" != "" ]; then
-                        mkdir -p ${SOURCE_ROOT_DIR}/test_results || true
-                        cp -r ${TEST_RESULTS_FOLDER}/* ${SOURCE_ROOT_DIR}/test_results/ || true
-                        TEST_RESULTS_FOLDER="${SOURCE_ROOT_DIR}/test_results"
-                        zip -r -j "${WORKSPACE}/test_results.zip" "${WORKSPACE}/test_results" || true
+                        TEST_RESULTS_FOLDER_FOR_AI="${SOURCE_ROOT_DIR}/test_results"
+                        mkdir -p ${TEST_RESULTS_FOLDER_FOR_AI} || true
+                        cp -r ${TEST_RESULTS_FOLDER}/* ${TEST_RESULTS_FOLDER_FOR_AI}/ || true
+                        zip -r -j "${WORKSPACE}/test_results.zip" "${TEST_RESULTS_FOLDER_FOR_AI}" || true
                     fi
 
                     MODEL=${AI_MODEL}
@@ -67,7 +67,7 @@ pipeline {
                     echo "Middlewaresw source code branch: [${MW_BRANCH}]" >> prompt.txt
                     echo "GUI client source code is in directory: [${GUI_CLIENT_SOURCE_CODE}]" >> prompt.txt
                     echo "Test source code directory: ${TEST_SOURCE_CODE}" >> prompt.txt
-                    echo "Test results folder: ${TEST_RESULTS_FOLDER}\n\n" >> prompt.txt
+                    echo "Test results folder for AI: ${TEST_RESULTS_FOLDER_FOR_AI}\n\n" >> prompt.txt
                     echo "${AI_PROMPT}" >> prompt.txt
                     echo "**********************************"
                     echo "Using model: ${AI_MODEL}"
