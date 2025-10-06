@@ -26,7 +26,7 @@ pipeline {
         stage('Cleanup workspace') {
             steps {
                 sh '''
-                    rm -fr "${WORKSPACE}/requirements_analysis.log" || true
+                    rm -fr "${WORKSPACE}/requirements_analysis.txt" || true
                 '''
             }
         }
