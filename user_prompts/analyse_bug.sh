@@ -16,7 +16,7 @@ GUI client source code is in directory: [${env://GUI_CLIENT_SOURCE_CODE}]
 
 Test case source code is in directory: [${env://TEST_SOURCE_CODE}]
 
-Test results are in directory: [${env://TEST_RESULTS_FOLDER_FOR_AI:-''}]
+Test results files are in directory: [${env://TEST_RESULTS_FOLDER_FOR_AI}]
 
 My question is:
 ${env://AI_PROMPT}
