@@ -63,6 +63,8 @@ pipeline {
                     MODEL=${AI_MODEL}
                     echo "Model in use: ${MODEL}" > prompt.txt
                     echo "Source root directory: ${SOURCE_ROOT_DIR}" >> prompt.txt
+                    echo "Middlewaresw source code is in directory: [${MIDDLEWARE_SOURCE_CODE}]" >> prompt.txt
+                    echo "GUI client source code is in directory: [${GUI_CLIENT_SOURCE_CODE}]" >> prompt.txt
                     echo "Test source code directory: ${TEST_SOURCE_CODE}\n\n" >> prompt.txt
                     echo "${AI_PROMPT}" >> prompt.txt
                     echo "**********************************"
