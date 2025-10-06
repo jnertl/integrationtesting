@@ -57,6 +57,7 @@ pipeline {
                         mkdir -p ${SOURCE_ROOT_DIR}/test_results || true
                         cp -r ${TEST_RESULTS_FOLDER}/* ${SOURCE_ROOT_DIR}/test_results/ || true
                         TEST_RESULTS_FOLDER="${SOURCE_ROOT_DIR}/test_results"
+                        zip -r -j "${WORKSPACE}/test_results.zip" "${WORKSPACE}/test_results" || true
                     fi
 
                     MODEL=${AI_MODEL}
@@ -88,12 +89,17 @@ pipeline {
     post {
         always {
             archiveArtifacts(
+                artifacts: 'test_results.zip',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
+            archiveArtifacts(
                 artifacts: 'prompt.txt',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'user_prompts/analyse_requirements.sh',
+                artifacts: 'user_prompts/analyse_bug.sh',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
