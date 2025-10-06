@@ -53,10 +53,6 @@ pipeline {
                     
                     export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" 2>/dev/null || echo "No test_requirements.md found.") > /dev/null
 
-                    #if [ -n "$TEST_RESULTS_FOLDER" ] && [ "$TEST_RESULTS_FOLDER" != "" ]; then
-                    #    AI_PROMPT="${AI_PROMPT}\nAnalyse logs from test results folder: ${TEST_RESULTS_FOLDER}"
-                    #fi
-
                     MODEL=${AI_MODEL}
                     echo "Model in use: ${MODEL}" > prompt.txt
                     echo "Source root directory: ${SOURCE_ROOT_DIR}" >> prompt.txt
