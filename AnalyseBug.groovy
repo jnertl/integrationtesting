@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        git_checkout_root = '/var/jenkins_home/workspace/integration_test_requirements_analysis_git_checkout'
+        git_checkout_root = '/var/jenkins_home/workspace/integration_test_bug_analysis_git_checkout'
     }
     stages {
         stage('Checkout') {

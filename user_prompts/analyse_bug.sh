@@ -3,7 +3,7 @@
 mcpServers:
   filesystem:
     type: "local"
-    command: ["npx", "-y", "@modelcontextprotocol/server-filesystem", "${env://SOURCE_ROOT_DIR:-/tmp}"]
+    command: ["npx", "-y", "@modelcontextprotocol/server-filesystem", "${env://SOURCE_ROOT_DIR:-/tmp}", "${env://TEST_RESULTS_FOLDER:-/tmp}"]
 
 model: "${env://MODEL:-ollama:granite3.1-moe:3b}"
 ---
