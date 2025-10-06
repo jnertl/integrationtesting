@@ -42,12 +42,14 @@ pipeline {
                     #export SOURCE_DIR="$SOURCE_ROOT_DIR/middlewaresw"
                     #export CPP_CONTEXT_FILE="$SOURCE_ROOT_DIR/$MW_CONTEXT_FILE"
                     #bash "$SOURCE_ROOT_DIR/testframework/scripts/create_cpp_context.sh"
+                    export MIDDLEWARE_SOURCE_CODE="$git_checkout_root/middlewaresw"
 
                     # Set up gui client context for analysis
                     #export GUI_CONTEXT_FILE=gui_src_context.txt
                     #export SOURCE_DIR="$SOURCE_ROOT_DIR/mwclientwithgui"
                     #export PYTHON_CONTEXT_FILE="$SOURCE_ROOT_DIR/$GUI_CONTEXT_FILE"
                     #bash "$SOURCE_ROOT_DIR/testframework/scripts/create_python_context.sh"
+                    export GUI_CLIENT_SOURCE_CODE="$git_checkout_root/mwclientwithgui"
 
                     # Set up test case context for analysis
                     #export TEST_CONTEXT_FILE=test_src_context.txt
