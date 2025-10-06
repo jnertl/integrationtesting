@@ -75,7 +75,7 @@ pipeline {
                     --quiet --stream=false \
                     --system-prompt ./system_prompts/requirements_assistant.txt \
                     script user_prompts/analyse_requirements.sh \
-                    >&1 | tee $WORKSPACE/requirements_analysis.txt
+                    >&1 | tee "$WORKSPACE/requirements_analysis.txt"
 
                     echo 'Analysing requirements completed.'
                 '''
