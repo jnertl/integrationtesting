@@ -11,7 +11,12 @@ pipeline {
                     rm -fr "${git_checkout_root}" || true
                     mkdir -p "${git_checkout_root}"
                     cd "${git_checkout_root}"
-                    git clone --single-branch --branch main https://github.com/jnertl/middlewaresw.git
+
+                    if [ -z "$MW_BRANCH" ]; then
+                        MW_BRANCH="main"
+                    fi
+
+                    git clone --single-branch --branch $MW_BRANCH https://github.com/jnertl/middlewaresw.git
                     git clone --single-branch --branch main https://github.com/jnertl/mwclientwithgui.git
                     git clone --single-branch --branch main https://github.com/jnertl/testframework.git
                     echo "middlewaresw"
