@@ -11,7 +11,12 @@ pipeline {
                     rm -fr "${git_checkout_root}" || true
                     mkdir -p "${git_checkout_root}"
                     cd "${git_checkout_root}"
-                    git clone --single-branch --branch main https://github.com/jnertl/middlewaresw.git
+
+                    if [ -z "$MW_BRANCH" ]; then
+                        MW_BRANCH="main"
+                    fi
+
+                    git clone --single-branch --branch $MW_BRANCH https://github.com/jnertl/middlewaresw.git
                     git clone --single-branch --branch main https://github.com/jnertl/mwclientwithgui.git
                     git clone --single-branch --branch main https://github.com/jnertl/testframework.git
                     echo "middlewaresw"
@@ -64,6 +69,7 @@ pipeline {
                     echo "Model in use: ${MODEL}" > prompt.txt
                     echo "Source root directory: ${SOURCE_ROOT_DIR}" >> prompt.txt
                     echo "Middlewaresw source code is in directory: [${MIDDLEWARE_SOURCE_CODE}]" >> prompt.txt
+                    echo "Middlewaresw source code branch: [${MW_BRANCH}]" >> prompt.txt
                     echo "GUI client source code is in directory: [${GUI_CLIENT_SOURCE_CODE}]" >> prompt.txt
                     echo "Test source code directory: ${TEST_SOURCE_CODE}\n\n" >> prompt.txt
                     echo "${AI_PROMPT}" >> prompt.txt
