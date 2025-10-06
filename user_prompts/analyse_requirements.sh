@@ -13,8 +13,7 @@ model: "${env://MODEL:-ollama:llama3.2:3b}"
 Integration testing requirements are as follows:
 ${env://TEST_REQUIREMENTS}
 
-Test case source code is located at:
-${env://TEST_SOURCE_CODE}
+Test case source code is in directory: [${env://TEST_SOURCE_CODE}]
 
 My question is:
 ${env://AI_PROMPT}
