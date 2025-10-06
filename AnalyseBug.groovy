@@ -32,6 +32,7 @@ pipeline {
             steps {
                 sh '''
                     rm -fr "${WORKSPACE}/bug_analysis.txt" || true
+                    rm -fr "${WORKSPACE}/test_results.zip" || true
                 '''
             }
         }
@@ -53,6 +54,7 @@ pipeline {
                     
                     export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" 2>/dev/null || echo "No test_requirements.md found.") > /dev/null
 
+                    TEST_RESULTS_FOLDER_FOR_AI=""
                     if [ -n "$TEST_RESULTS_FOLDER" ] && [ "$TEST_RESULTS_FOLDER" != "" ]; then
                         TEST_RESULTS_FOLDER_FOR_AI="${SOURCE_ROOT_DIR}/test_results"
                         mkdir -p ${TEST_RESULTS_FOLDER_FOR_AI} || true
