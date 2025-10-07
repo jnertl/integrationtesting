@@ -45,18 +45,19 @@ pipeline {
                     export SOURCE_ROOT_DIR="$git_checkout_root"
                     
                     # Set up middleware context for analysis
-                    export MIDDLEWARE_SOURCE_CODE="$git_checkout_root/middlewaresw"
+                    # export MIDDLEWARE_SOURCE_CODE="$git_checkout_root/middlewaresw"
 
                     # Set up gui client context for analysis
-                    export GUI_CLIENT_SOURCE_CODE="$git_checkout_root/mwclientwithgui"
+                    # export GUI_CLIENT_SOURCE_CODE="$git_checkout_root/mwclientwithgui"
 
                     # Set up test case context for analysis
-                    export TEST_SOURCE_CODE="$git_checkout_root/testframework/tests"
+                    # export TEST_SOURCE_CODE="$git_checkout_root/testframework/tests"
                     
-                    export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" 2>/dev/null || echo "No test_requirements.md found.") > /dev/null
+                    # export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" 2>/dev/null || echo "No test_requirements.md found.") > /dev/null
 
                     export TEST_RESULTS_FOLDER_FOR_AI=""
                     if [ -n "${TEST_RESULTS_FOLDER}" ]; then
+                        echo "Test results folder found: ${TEST_RESULTS_FOLDER}"
                         export TEST_RESULTS_FOLDER_FOR_AI="${SOURCE_ROOT_DIR}/test_results"
                         mkdir -p ${TEST_RESULTS_FOLDER_FOR_AI} || true
                         cp -r ${TEST_RESULTS_FOLDER}/* ${TEST_RESULTS_FOLDER_FOR_AI}/ || true
