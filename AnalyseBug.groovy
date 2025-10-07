@@ -63,7 +63,7 @@ pipeline {
                         zip -r -j "${WORKSPACE}/test_results.zip" "${TEST_RESULTS_FOLDER_FOR_AI}" || true
                     fi
 
-                    MODEL=${AI_MODEL}
+                    export MODEL=${AI_MODEL}
                     echo "Model in use: ${MODEL}" > prompt.txt
                     echo "Source root directory: ${SOURCE_ROOT_DIR}" >> prompt.txt
                     echo "Middlewaresw source code is in directory: [${MIDDLEWARE_SOURCE_CODE}]" >> prompt.txt
