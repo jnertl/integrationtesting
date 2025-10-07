@@ -43,38 +43,29 @@ pipeline {
                     export SOURCE_ROOT_DIR="$git_checkout_root"
                     
                     # Set up middleware context for analysis
-                    #export MW_CONTEXT_FILE=mw_src_context.txt
-                    #export SOURCE_DIR="$SOURCE_ROOT_DIR/middlewaresw"
-                    #export CPP_CONTEXT_FILE="$SOURCE_ROOT_DIR/$MW_CONTEXT_FILE"
-                    #bash "$SOURCE_ROOT_DIR/testframework/scripts/create_cpp_context.sh"
-                    export MIDDLEWARE_SOURCE_CODE="$git_checkout_root/middlewaresw"
+                    export MIDDLEWARE_SOURCE_CODE="${SOURCE_ROOT_DIR}/middlewaresw"
 
                     # Set up gui client context for analysis
-                    #export GUI_CONTEXT_FILE=gui_src_context.txt
-                    #export SOURCE_DIR="$SOURCE_ROOT_DIR/mwclientwithgui"
-                    #export PYTHON_CONTEXT_FILE="$SOURCE_ROOT_DIR/$GUI_CONTEXT_FILE"
-                    #bash "$SOURCE_ROOT_DIR/testframework/scripts/create_python_context.sh"
-                    export GUI_CLIENT_SOURCE_CODE="$git_checkout_root/mwclientwithgui"
+                    export GUI_CLIENT_SOURCE_CODE="${SOURCE_ROOT_DIR}/mwclientwithgui"
 
                     # Set up test case context for analysis
-                    #export TEST_CONTEXT_FILE=test_src_context.txt
-                    #export SOURCE_DIR="$SOURCE_ROOT_DIR/testframework"
-                    #export ROBOT_CONTEXT_FILE="$SOURCE_ROOT_DIR/$TEST_CONTEXT_FILE"
-                    #bash "$SOURCE_ROOT_DIR/testframework/scripts/create_robot_context.sh"
-                    export TEST_SOURCE_CODE="$git_checkout_root/testframework/tests"
-                    
-                    export TEST_REQUIREMENTS=$(cat "${WORKSPACE}/integration_testing_requirements.md" 2>/dev/null || echo "No test_requirements.md found.") > /dev/null
+                    export TEST_SOURCE_CODE="${SOURCE_ROOT_DIR}/testframework/tests"
 
-                    MODEL=${AI_MODEL}
-                    echo "Model in use: ${MODEL}" > prompt.txt
-                    echo "Source root directory: ${SOURCE_ROOT_DIR}" >> prompt.txt
+                    # Copy test requirements for analysis
+                    cp "${WORKSPACE}/integration_testing_requirements.md" "${SOURCE_ROOT_DIR}"
+                    export TEST_REQUIREMENTS_FILE="${SOURCE_ROOT_DIR}/integration_testing_requirements.md"
+
+                    export MODEL=${AI_MODEL}
+                    echo "Model in use: [${MODEL}]" > prompt.txt
+                    echo "Source root directory: [${SOURCE_ROOT_DIR}]" >> prompt.txt
                     echo "Middlewaresw source code is in directory: [${MIDDLEWARE_SOURCE_CODE}]" >> prompt.txt
                     echo "Middlewaresw source code branch: [${MW_BRANCH}]" >> prompt.txt
                     echo "GUI client source code is in directory: [${GUI_CLIENT_SOURCE_CODE}]" >> prompt.txt
-                    echo "Test source code directory: ${TEST_SOURCE_CODE}\n\n" >> prompt.txt
+                    echo "Test source code directory: [${TEST_SOURCE_CODE}]" >> prompt.txt
+                    echo "Test results source folder: [${TEST_RESULTS_FOLDER}]" >> prompt.txt
                     echo "${AI_PROMPT}" >> prompt.txt
                     echo "**********************************"
-                    echo "Using model: ${AI_MODEL}"
+                    echo "Using model: [${MODEL}]"
                     echo "**********************************"
 
                     bash "$SOURCE_ROOT_DIR/testframework/scripts/ongoing_printer.sh" \
