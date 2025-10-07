@@ -7,8 +7,8 @@ mcpServers:
 
 model: "${env://MODEL}"
 ---
+Test requirements are in the file: ${env://TEST_REQUIREMENTS_FILE}
 Test results are in the directory: ${env://TEST_RESULTS_FOLDER_FOR_AI}
 
 My question is:
 ${env://AI_PROMPT}
-
