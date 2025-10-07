@@ -45,13 +45,13 @@ pipeline {
                     export SOURCE_ROOT_DIR="$git_checkout_root"
                     
                     # Set up middleware context for analysis
-                    # export MIDDLEWARE_SOURCE_CODE="${SOURCE_ROOT_DIR}/middlewaresw"
+                    export MIDDLEWARE_SOURCE_CODE="${SOURCE_ROOT_DIR}/middlewaresw"
 
                     # Set up gui client context for analysis
-                    # export GUI_CLIENT_SOURCE_CODE="${SOURCE_ROOT_DIR}/mwclientwithgui"
+                    export GUI_CLIENT_SOURCE_CODE="${SOURCE_ROOT_DIR}/mwclientwithgui"
 
                     # Set up test case context for analysis
-                    # export TEST_SOURCE_CODE="${SOURCE_ROOT_DIR}/testframework/tests"
+                    export TEST_SOURCE_CODE="${SOURCE_ROOT_DIR}/testframework/tests"
 
                     # Copy test requirements for analysis
                     cp "${WORKSPACE}/integration_testing_requirements.md" "${SOURCE_ROOT_DIR}"
@@ -67,17 +67,17 @@ pipeline {
                     fi
 
                     export MODEL=${AI_MODEL}
-                    echo "Model in use: ${MODEL}" > prompt.txt
-                    echo "Source root directory: ${SOURCE_ROOT_DIR}" >> prompt.txt
+                    echo "Model in use: [${MODEL}]" > prompt.txt
+                    echo "Source root directory: [${SOURCE_ROOT_DIR}]" >> prompt.txt
                     echo "Middlewaresw source code is in directory: [${MIDDLEWARE_SOURCE_CODE}]" >> prompt.txt
                     echo "Middlewaresw source code branch: [${MW_BRANCH}]" >> prompt.txt
                     echo "GUI client source code is in directory: [${GUI_CLIENT_SOURCE_CODE}]" >> prompt.txt
-                    echo "Test source code directory: ${TEST_SOURCE_CODE}" >> prompt.txt
-                    echo "Test results source folder: ${TEST_RESULTS_FOLDER}" >> prompt.txt
-                    echo "Test results folder for AI: ${TEST_RESULTS_FOLDER_FOR_AI}\n\n" >> prompt.txt
+                    echo "Test source code directory: [${TEST_SOURCE_CODE}]" >> prompt.txt
+                    echo "Test results source folder: [${TEST_RESULTS_FOLDER}]" >> prompt.txt
+                    echo "Test results folder for AI: [${TEST_RESULTS_FOLDER_FOR_AI}]\n\n" >> prompt.txt
                     echo "${AI_PROMPT}" >> prompt.txt
                     echo "**********************************"
-                    echo "Using model: ${AI_MODEL}"
+                    echo "Using model: [${MODEL}]"
                     echo "**********************************"
 
                     bash "$SOURCE_ROOT_DIR/testframework/scripts/ongoing_printer.sh" \
