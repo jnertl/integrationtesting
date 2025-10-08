@@ -33,6 +33,7 @@ pipeline {
                 sh '''
                     rm -fr "${WORKSPACE}/test_results_analysis.md" || true
                     rm -fr "${WORKSPACE}/test_results.zip" || true
+                    rm -fr "${WORKSPACE}/ai_output.md" || true
                     rm -fr "${WORKSPACE}/prompt.txt" || true
                 '''
             }
@@ -86,7 +87,10 @@ pipeline {
                     --quiet --stream=false \
                     --system-prompt ./system_prompts/quality_manager.txt \
                     script user_prompts/analyse_test_results.sh \
-                    >&1 | tee "$WORKSPACE/test_results_analysis.md"
+                    >&1 | tee "$WORKSPACE/ai_output.md"
+                    python3 "$SOURCE_ROOT_DIR/testframework/scripts/clean_markdown_utf8.py" \
+                        "$WORKSPACE/ai_output.md" \
+                        "$WORKSPACE/test_results_analysis.md"
 
                     echo 'Analysing test results completed.'
                 '''
