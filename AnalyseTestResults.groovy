@@ -61,13 +61,16 @@ pipeline {
                     export TEST_RESULTS_FOLDER_FOR_AI="${SOURCE_ROOT_DIR}/test_results"
                     mkdir -p "${TEST_RESULTS_FOLDER_FOR_AI}" || true
                     # If the test results folder is the latest_failed_tests folder, copy from there
-                    if [[ "${TEST_RESULTS_FOLDER}" == *latest_failed_tests* ]]; then
-                        echo "Copying test results from latest_failed_tests folder: ${TEST_RESULTS_FOLDER}"
-                        cp "${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
-                    else
-                        echo "Copying test results from workspace folder: ${WORKSPACE}/${TEST_RESULTS_FOLDER}"
-                        cp "${WORKSPACE}/${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
-                    fi
+                    case "${TEST_RESULTS_FOLDER}" in
+                        *latest_failed_tests*)
+                            echo "Copying test results from latest_failed_tests folder: ${TEST_RESULTS_FOLDER}"
+                            cp "${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
+                            ;;
+                        *)
+                            echo "Copying test results from workspace folder: ${WORKSPACE}/${TEST_RESULTS_FOLDER}"
+                            cp "${WORKSPACE}/${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
+                            ;;
+                    esac
                     zip -r -j "${WORKSPACE}/test_results.zip" "${TEST_RESULTS_FOLDER_FOR_AI}" || true
 
                     export MODEL=${AI_MODEL}
