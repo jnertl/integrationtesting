@@ -32,6 +32,7 @@ pipeline {
             steps {
                 sh '''
                     rm -fr "${WORKSPACE}/requirements_analysis.md" || true
+                    rm -fr "${WORKSPACE}/prompt.txt" || true
                 '''
             }
         }
@@ -62,7 +63,6 @@ pipeline {
                     echo "Middlewaresw source code branch: [${MW_BRANCH}]" >> prompt.txt
                     echo "GUI client source code is in directory: [${GUI_CLIENT_SOURCE_CODE}]" >> prompt.txt
                     echo "Test source code directory: [${TEST_SOURCE_CODE}]" >> prompt.txt
-                    echo "Test results source folder: [${TEST_RESULTS_FOLDER}]\n\n" >> prompt.txt
                     echo "${AI_PROMPT}" >> prompt.txt
                     echo "**********************************"
                     echo "Using model: [${MODEL}]"
@@ -110,7 +110,7 @@ pipeline {
             )
         }
         success {
-            echo 'Build succeeded!'
+            echo 'Job succeeded!'
         }
     }
 }
