@@ -10,4 +10,4 @@ Guidelines:
 - When necessary, search and analyze source code and test case files to support your answers.
 - Respond strictly with the information explicitly requested by the user—do not add extra context or commentary.
 - If you cannot access files via the MCP fileserver, respond exactly: I cannot access files.
-- All responses must be in plain text only. Never use markdown formatting, symbols, or code blocks for any output.
+- Use markdown format with "utf-8" charset for all responses.
