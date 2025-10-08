@@ -65,13 +65,11 @@ pipeline {
                         mkdir -p "${TEST_RESULTS_FOLDER_FOR_AI}" || true
 
                         # If the test results folder is the latest_failed_tests folder, copy from there
-                        if [ "${TEST_RESULTS_FOLDER}" = "/var/jenkins_home/workspace/latest_failed_tests/" ]; then
+                        if [[ "${TEST_RESULTS_FOLDER}" == *latest_failed_tests* ]]; then
                             cp "${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
                         else
                             cp "${WORKSPACE}/${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
                         fi
-
-                        cp "${WORKSPACE}/${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
                         zip -r -j "${WORKSPACE}/test_results.zip" "${TEST_RESULTS_FOLDER_FOR_AI}" || true
                     fi
 
