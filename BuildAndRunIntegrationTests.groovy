@@ -79,6 +79,15 @@ pipeline {
                     echo "Using includeTags: ${includeTags}"
                     scripts/run_tests.sh -i ${includeTags} -o "${WORKSPACE}/results" || true
 
+                    echo "Checking dmesg for segfaults..."
+                    dmesg | grep -i segfault | tee -a "${WORKSPACE}/middlewaresw.log"
+                    if [ $? -eq 0 ]; then
+                        echo "TEST FAILED: Segfault detected in dmesg." | tee -a "${WORKSPACE}/middlewaresw.log"
+                        echo "Generating backtrace..." | tee -a "${WORKSPACE}/middlewaresw.log"
+                        cd "${git_checkout_root}/middlewaresw/"
+                        gdb -batch -ex "bt" -ex "quit" "${MW_SW_BIN_PATH}/middlewaresw core"* | tee -a "${MW_LOG_OUTPUT_FILE}"
+                    fi
+
                     zip -r -j "${WORKSPACE}/robot_results.zip" "${WORKSPACE}/results" || true
                 '''
             }
@@ -128,6 +137,18 @@ pipeline {
         }
         success {
             echo 'Build succeeded!'
+        }
+        failure {
+            sh '''
+                echo "TEST FAILED: One or more tests failed."
+                TEST_RESULT_DIR_FOR_ANALYSIS="/var/jenkins_home/workspace/latest_failed_tests/"
+                rm -fr "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
+                mkdir -p "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
+                cp -r "${WORKSPACE}/results/"* "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
+                cp -r "${WORKSPACE}/middlewaresw.log" "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
+                cp -r "${WORKSPACE}/mwclientwithgui.log" "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
+                cp -r "${WORKSPACE}/mwclientwithgui_process.log" "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
+            '''
         }
     }
 }
