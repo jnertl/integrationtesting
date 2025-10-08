@@ -85,7 +85,7 @@ pipeline {
                     --temperature 0.1 --top-p 0.8 --top-k 50 --max-tokens 4096 \
                     --quiet --stream=false \
                     --system-prompt ./system_prompts/quality_manager.txt \
-                    script user_prompts/analyse_bug.sh \
+                    script user_prompts/analyse_test_results.sh \
                     >&1 | tee "$WORKSPACE/test_results_analysis.txt"
 
                     echo 'Analysing test results completed.'
@@ -106,12 +106,12 @@ pipeline {
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'user_prompts/analyse_bug.sh',
+                artifacts: 'user_prompts/analyse_test_results.sh',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'system_prompts/requirements_assistant.txt',
+                artifacts: 'system_prompts/quality_manager.txt',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
