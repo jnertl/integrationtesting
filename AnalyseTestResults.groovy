@@ -127,7 +127,7 @@ pipeline {
             )
         }
         success {
-            echo 'Build succeeded!'
+            echo 'Job succeeded!'
         }
     }
 }
