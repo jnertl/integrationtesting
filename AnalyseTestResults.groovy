@@ -62,7 +62,7 @@ pipeline {
                         echo "Test results folder found: ${TEST_RESULTS_FOLDER}"
                         export TEST_RESULTS_FOLDER_FOR_AI="${SOURCE_ROOT_DIR}/test_results"
                         mkdir -p "${TEST_RESULTS_FOLDER_FOR_AI}" || true
-                        cp "${WORKSPACE}/${TEST_RESULTS_FOLDER}/*" "${TEST_RESULTS_FOLDER_FOR_AI}" || true
+                        cp "${WORKSPACE}/${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
                         zip -r -j "${WORKSPACE}/test_results.zip" "${TEST_RESULTS_FOLDER_FOR_AI}" || true
                     fi
 
