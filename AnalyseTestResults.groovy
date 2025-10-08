@@ -58,20 +58,17 @@ pipeline {
                     cp "${WORKSPACE}/integration_testing_requirements.md" "${SOURCE_ROOT_DIR}"
                     export TEST_REQUIREMENTS_FILE="${SOURCE_ROOT_DIR}/integration_testing_requirements.md"
 
-                    export TEST_RESULTS_FOLDER_FOR_AI=""
-                    if [ -n "${TEST_RESULTS_FOLDER}" ]; then
-                        echo "Test results folder found: ${TEST_RESULTS_FOLDER}"
-                        export TEST_RESULTS_FOLDER_FOR_AI="${SOURCE_ROOT_DIR}/test_results"
-                        mkdir -p "${TEST_RESULTS_FOLDER_FOR_AI}" || true
-
-                        # If the test results folder is the latest_failed_tests folder, copy from there
-                        if [[ "${TEST_RESULTS_FOLDER}" == *latest_failed_tests* ]]; then
-                            cp "${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
-                        else
-                            cp "${WORKSPACE}/${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
-                        fi
-                        zip -r -j "${WORKSPACE}/test_results.zip" "${TEST_RESULTS_FOLDER_FOR_AI}" || true
+                    export TEST_RESULTS_FOLDER_FOR_AI="${SOURCE_ROOT_DIR}/test_results"
+                    mkdir -p "${TEST_RESULTS_FOLDER_FOR_AI}" || true
+                    # If the test results folder is the latest_failed_tests folder, copy from there
+                    if [[ "${TEST_RESULTS_FOLDER}" == *latest_failed_tests* ]]; then
+                        echo "Copying test results from latest_failed_tests folder: ${TEST_RESULTS_FOLDER}"
+                        cp "${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
+                    else
+                        echo "Copying test results from workspace folder: ${WORKSPACE}/${TEST_RESULTS_FOLDER}"
+                        cp "${WORKSPACE}/${TEST_RESULTS_FOLDER}/"* "${TEST_RESULTS_FOLDER_FOR_AI}" || true
                     fi
+                    zip -r -j "${WORKSPACE}/test_results.zip" "${TEST_RESULTS_FOLDER_FOR_AI}" || true
 
                     export MODEL=${AI_MODEL}
                     echo "Model in use: [${MODEL}]" > prompt.txt
