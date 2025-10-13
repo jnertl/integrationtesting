@@ -18,13 +18,13 @@ pipeline {
 
                     git clone --single-branch --branch $MW_BRANCH https://github.com/jnertl/middlewaresw.git
                     git clone --single-branch --branch main https://github.com/jnertl/mwclientwithgui.git
-                    git clone --single-branch --branch main https://github.com/jnertl/testframework.git
+                    git clone --single-branch --branch main https://github.com/jnertl/testing.git
                     echo "middlewaresw"
                     git --no-pager -C middlewaresw/ show --summary
                     echo "mwclientwithgui"
                     git --no-pager -C mwclientwithgui/ show --summary
-                    echo "testframework"
-                    git --no-pager -C testframework/ show --summary
+                    echo "testing"
+                    git --no-pager -C testing/ show --summary
                 '''
             }
         }
@@ -51,7 +51,7 @@ pipeline {
                     export GUI_CLIENT_SOURCE_CODE="${SOURCE_ROOT_DIR}/mwclientwithgui"
 
                     # Set up test case context for analysis
-                    export TEST_SOURCE_CODE="${SOURCE_ROOT_DIR}/testframework/tests"
+                    export TEST_SOURCE_CODE="${SOURCE_ROOT_DIR}/testing/tests"
 
                     # Copy test requirements for analysis
                     cp "${WORKSPACE}/integration_testing_requirements.md" "${SOURCE_ROOT_DIR}"
@@ -69,14 +69,14 @@ pipeline {
                     echo "Using model: [${MODEL}]"
                     echo "**********************************"
 
-                    bash "$SOURCE_ROOT_DIR/testframework/scripts/ongoing_printer.sh" \
+                    bash "$SOURCE_ROOT_DIR/testing/scripts/ongoing_printer.sh" \
                     /usr/local/bin/mcphost \
                     --temperature 0.1 --top-p 0.8 --top-k 50 --max-tokens 4096 \
                     --quiet --stream=false \
                     --system-prompt ./system_prompts/requirements_assistant.txt \
                     script user_prompts/analyse_requirements.sh \
                     >&1 | tee "$WORKSPACE/ai_output.md"
-                    python3 "$SOURCE_ROOT_DIR/testframework/scripts/clean_markdown_utf8.py" \
+                    python3 "$SOURCE_ROOT_DIR/testing/scripts/clean_markdown_utf8.py" \
                         "$WORKSPACE/ai_output.md" \
                         "$WORKSPACE/requirements_analysis.md"
                     echo 'Analysing requirements completed.'
