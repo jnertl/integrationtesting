@@ -72,9 +72,10 @@ pipeline {
 
                     if [ -f "${MW_LOG_OUTPUT_FILE}" ]; then
                         echo "Checking dmesg for segfaults..."
-                        dmesg | grep -i segfault | tee -a "${MW_LOG_OUTPUT_FILE}"
+                        dmesg | grep -i segfault
                         if [ $? -eq 0 ]; then
                             echo "TEST FAILED: Segfault detected in dmesg." | tee -a "${MW_LOG_OUTPUT_FILE}"
+                            dmesg | grep -i segfault | tee -a "${MW_LOG_OUTPUT_FILE}"
                             echo "Generating backtrace..." | tee -a "${MW_LOG_OUTPUT_FILE}"
                             cd "${git_checkout_root}/middlewaresw/"
                             gdb -batch -ex "bt" -ex "quit" "${MW_SW_BIN_PATH}/middlewaresw" core* | tee -a "${MW_LOG_OUTPUT_FILE}"
