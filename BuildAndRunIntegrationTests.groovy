@@ -56,7 +56,7 @@ pipeline {
                     ~/.local/bin/uv pip install -r requirements.txt --link-mode=copy
                     pytest --version
                     mkdir -p "${test_results_dir}" | true
-                    export MW_SW_BIN_PATH="${git_checkout_root}/middlewaresw/build_application"
+                    export MW_SW_BIN_PATH="${git_checkout_root}/middlewaresw/build_application/middlewaresw"
                     export MW_CLIENT_PATH="${git_checkout_root}/mwclientwithgui"
                     export MW_LOG_OUTPUT_FILE="${test_results_dir}/middlewaresw.log"
                     export MW_CLIENT_LOG_OUTPUT_FILE="${test_results_dir}/mwclientwithgui.log"
