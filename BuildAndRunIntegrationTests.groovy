@@ -40,7 +40,7 @@ pipeline {
         stage('Cleanup workspace') {
             steps {
                 sh '''
-                    rm -fr "${test_results_dir}" || true
+                    rm -fr "${WORKSPACE}/test_results" || true
                     rm -fr "${WORKSPACE}/test_results.zip" || true
                 '''
             }
