@@ -57,11 +57,12 @@ pipeline {
                     . pytests_venv/bin/activate
                     ~/.local/bin/uv pip install -r requirements.txt --link-mode=copy
                     pytest --version
+                    mkdir -p "${WORKSPACE}/results" | true
                     export MW_SW_BIN_PATH="${git_checkout_root}/middlewaresw/build_application"
                     export MW_CLIENT_PATH="${git_checkout_root}/mwclientwithgui"
-                    export MW_LOG_OUTPUT_FILE="${WORKSPACE}/middlewaresw.log"
-                    export MW_CLIENT_LOG_OUTPUT_FILE="${WORKSPACE}/mwclientwithgui.log"
-                    export MW_CLIENT_PROCESS_OUTPUT_FILE="${WORKSPACE}/mwclientwithgui_process.log"
+                    export MW_LOG_OUTPUT_FILE="${WORKSPACE}/results/middlewaresw.log"
+                    export MW_CLIENT_LOG_OUTPUT_FILE="${WORKSPACE}/results/mwclientwithgui.log"
+                    export MW_CLIENT_PROCESS_OUTPUT_FILE="${WORKSPACE}/results/mwclientwithgui_process.log"
 
                     includeTags="integration"
                     if [ -n "$INCLUDE_TAG_PARAMS" ]; then
@@ -71,12 +72,12 @@ pipeline {
                     echo "Using includeTags: ${includeTags}"
                     ./run_tests.sh --marks ${includeTags} -o "${WORKSPACE}/results" || true
 
-                    if [ -f "${WORKSPACE}/middlewaresw.log" ]; then
+                    if [ -f "${MW_LOG_OUTPUT_FILE}" ]; then
                         echo "Checking dmesg for segfaults..."
-                        dmesg | grep -i segfault | tee -a "${WORKSPACE}/middlewaresw.log"
+                        dmesg | grep -i segfault | tee -a "${MW_LOG_OUTPUT_FILE}"
                         if [ $? -eq 0 ]; then
-                            echo "TEST FAILED: Segfault detected in dmesg." | tee -a "${WORKSPACE}/middlewaresw.log"
-                            echo "Generating backtrace..." | tee -a "${WORKSPACE}/middlewaresw.log"
+                            echo "TEST FAILED: Segfault detected in dmesg." | tee -a "${MW_LOG_OUTPUT_FILE}"
+                            echo "Generating backtrace..." | tee -a "${MW_LOG_OUTPUT_FILE}"
                             cd "${git_checkout_root}/middlewaresw/"
                             gdb -batch -ex "bt" -ex "quit" "${MW_SW_BIN_PATH}/middlewaresw" core* | tee -a "${MW_LOG_OUTPUT_FILE}"
                         fi
