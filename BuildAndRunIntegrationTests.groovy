@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         git_checkout_root = '/var/jenkins_home/workspace/integration_testing_git_checkout'
-        test_results_dir = "${WORKSPACE}/test_results"
+        test_results_dir = "${git_checkout_root}/test_results"
     }
     stages {
         stage('Checkout') {
@@ -81,7 +81,8 @@ pipeline {
                             gdb -batch -ex "bt" -ex "quit" "${MW_SW_BIN_PATH}/middlewaresw" core* | tee -a "${MW_LOG_OUTPUT_FILE}"
                         fi
                     fi
-                    zip -r -j "${WORKSPACE}/test_results.zip" "${test_results_dir}" || true
+                    cp -r "${test_results_dir}" "${WORKSPACE}/" || true
+                    zip -r -j "${WORKSPACE}/test_results.zip" "test_results" || true
                 '''
             }
         }
