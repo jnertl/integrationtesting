@@ -57,6 +57,7 @@ pipeline {
                     . pytests_venv/bin/activate
                     ~/.local/bin/uv pip install -r requirements.txt --link-mode=copy
                     pytest --version
+                    rm -fr "${WORKSPACE}/results" || true
                     mkdir -p "${WORKSPACE}/results" | true
                     export MW_SW_BIN_PATH="${git_checkout_root}/middlewaresw/build_application"
                     export MW_CLIENT_PATH="${git_checkout_root}/mwclientwithgui"
