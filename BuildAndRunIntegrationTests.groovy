@@ -70,17 +70,6 @@ pipeline {
                     echo "Using includeTags: ${includeTags}"
                     ./run_tests.sh --marks ${includeTags} -o "${test_results_dir}" || true
 
-                    if [ -f "${MW_LOG_OUTPUT_FILE}" ]; then
-                        echo "Checking dmesg for segfaults..."
-                        dmesg | grep -i segfault
-                        if [ $? -eq 0 ]; then
-                            echo "TEST FAILED: Segfault detected in dmesg." | tee -a "${MW_LOG_OUTPUT_FILE}"
-                            dmesg | grep -i segfault | tee -a "${MW_LOG_OUTPUT_FILE}"
-                            echo "Generating backtrace..." | tee -a "${MW_LOG_OUTPUT_FILE}"
-                            cd "${git_checkout_root}/middlewaresw/"
-                            gdb -batch -ex "bt" -ex "quit" "${MW_SW_BIN_PATH}/middlewaresw" core* | tee -a "${MW_LOG_OUTPUT_FILE}"
-                        fi
-                    fi
                     cp -r "${test_results_dir}" "${WORKSPACE}/" || true
                     zip -r -j "${WORKSPACE}/test_results.zip" "test_results" || true
                 '''
@@ -106,6 +95,12 @@ pipeline {
         failure {
             sh '''
                 echo "TEST FAILED: One or more tests failed."
+                cd "${git_checkout_root}/middlewaresw/"
+                if ls core* 1> /dev/null 2>&1; then
+                    gdb -batch -ex "bt" -ex "quit" "${MW_SW_BIN_PATH}/middlewaresw" core* | tee -a "${MW_LOG_OUTPUT_FILE}"
+                else
+                    echo "No core dump files found."
+                fi
                 TEST_RESULT_DIR_FOR_ANALYSIS="/var/jenkins_home/workspace/latest_failed_tests/"
                 rm -fr "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
                 mkdir -p "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
