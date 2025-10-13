@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        git_checkout_root = '/var/jenkins_home/workspace/integration_test_failure_analysis_git_checkout'
+        git_checkout_root = '/var/jenkins_home/workspace/integration_testing_git_checkout'
     }
     stages {
         stage('Checkout') {
@@ -42,7 +42,7 @@ pipeline {
                     rm -fr "${WORKSPACE}/middlewaresw.log" || true
                     rm -fr "${WORKSPACE}/mwclientwithgui.log" || true
                     rm -fr "${WORKSPACE}/mwclientwithgui_process.log" || true
-                    rm -fr "${WORKSPACE}/results" || true
+                    rm -fr "${WORKSPACE}/test_results" || true
                     rm -fr "${WORKSPACE}/test_results.zip" || true
                 '''
             }
@@ -57,13 +57,13 @@ pipeline {
                     . pytests_venv/bin/activate
                     ~/.local/bin/uv pip install -r requirements.txt --link-mode=copy
                     pytest --version
-                    rm -fr "${WORKSPACE}/results" || true
-                    mkdir -p "${WORKSPACE}/results" | true
+                    rm -fr "${WORKSPACE}/test_results" || true
+                    mkdir -p "${WORKSPACE}/test_results" | true
                     export MW_SW_BIN_PATH="${git_checkout_root}/middlewaresw/build_application"
                     export MW_CLIENT_PATH="${git_checkout_root}/mwclientwithgui"
-                    export MW_LOG_OUTPUT_FILE="${WORKSPACE}/results/middlewaresw.log"
-                    export MW_CLIENT_LOG_OUTPUT_FILE="${WORKSPACE}/results/mwclientwithgui.log"
-                    export MW_CLIENT_PROCESS_OUTPUT_FILE="${WORKSPACE}/results/mwclientwithgui_process.log"
+                    export MW_LOG_OUTPUT_FILE="${WORKSPACE}/test_results/middlewaresw.log"
+                    export MW_CLIENT_LOG_OUTPUT_FILE="${WORKSPACE}/test_results/mwclientwithgui.log"
+                    export MW_CLIENT_PROCESS_OUTPUT_FILE="${WORKSPACE}/test_results/mwclientwithgui_process.log"
 
                     includeTags="integration"
                     if [ -n "$INCLUDE_TAG_PARAMS" ]; then
@@ -71,7 +71,7 @@ pipeline {
                     fi
 
                     echo "Using includeTags: ${includeTags}"
-                    ./run_tests.sh --marks ${includeTags} -o "${WORKSPACE}/results" || true
+                    ./run_tests.sh --marks ${includeTags} -o "${WORKSPACE}/test_results" || true
 
                     if [ -f "${MW_LOG_OUTPUT_FILE}" ]; then
                         echo "Checking dmesg for segfaults..."
@@ -83,7 +83,7 @@ pipeline {
                             gdb -batch -ex "bt" -ex "quit" "${MW_SW_BIN_PATH}/middlewaresw" core* | tee -a "${MW_LOG_OUTPUT_FILE}"
                         fi
                     fi
-                    zip -r -j "${WORKSPACE}/test_results.zip" "${WORKSPACE}/results" || true
+                    zip -r -j "${WORKSPACE}/test_results.zip" "${WORKSPACE}/test_results" || true
                 '''
             }
         }
@@ -91,7 +91,7 @@ pipeline {
     post {
         always {
             archiveArtifacts(
-                artifacts: 'results/*',
+                artifacts: 'test_results/*',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
@@ -125,7 +125,7 @@ pipeline {
                 TEST_RESULT_DIR_FOR_ANALYSIS="/var/jenkins_home/workspace/latest_failed_tests/"
                 rm -fr "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
                 mkdir -p "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
-                cp -r "${WORKSPACE}/results/"* "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
+                cp -r "${WORKSPACE}/test_results/"* "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
                 cp -r "${WORKSPACE}/middlewaresw.log" "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
                 cp -r "${WORKSPACE}/mwclientwithgui.log" "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
                 cp -r "${WORKSPACE}/mwclientwithgui_process.log" "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
