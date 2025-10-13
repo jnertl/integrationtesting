@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         git_checkout_root = '/var/jenkins_home/workspace/integration_testing_git_checkout'
+        test_results_dir = "${WORKSPACE}/test_results"
     }
     stages {
         stage('Checkout') {
@@ -39,10 +40,7 @@ pipeline {
         stage('Cleanup workspace') {
             steps {
                 sh '''
-                    rm -fr "${WORKSPACE}/middlewaresw.log" || true
-                    rm -fr "${WORKSPACE}/mwclientwithgui.log" || true
-                    rm -fr "${WORKSPACE}/mwclientwithgui_process.log" || true
-                    rm -fr "${WORKSPACE}/test_results" || true
+                    rm -fr "${test_results_dir}" || true
                     rm -fr "${WORKSPACE}/test_results.zip" || true
                 '''
             }
@@ -57,13 +55,12 @@ pipeline {
                     . pytests_venv/bin/activate
                     ~/.local/bin/uv pip install -r requirements.txt --link-mode=copy
                     pytest --version
-                    rm -fr "${WORKSPACE}/test_results" || true
-                    mkdir -p "${WORKSPACE}/test_results" | true
+                    mkdir -p "${test_results_dir}" | true
                     export MW_SW_BIN_PATH="${git_checkout_root}/middlewaresw/build_application"
                     export MW_CLIENT_PATH="${git_checkout_root}/mwclientwithgui"
-                    export MW_LOG_OUTPUT_FILE="${WORKSPACE}/test_results/middlewaresw.log"
-                    export MW_CLIENT_LOG_OUTPUT_FILE="${WORKSPACE}/test_results/mwclientwithgui.log"
-                    export MW_CLIENT_PROCESS_OUTPUT_FILE="${WORKSPACE}/test_results/mwclientwithgui_process.log"
+                    export MW_LOG_OUTPUT_FILE="${test_results_dir}/middlewaresw.log"
+                    export MW_CLIENT_LOG_OUTPUT_FILE="${test_results_dir}/mwclientwithgui.log"
+                    export MW_CLIENT_PROCESS_OUTPUT_FILE="${test_results_dir}/mwclientwithgui_process.log"
 
                     includeTags="integration"
                     if [ -n "$INCLUDE_TAG_PARAMS" ]; then
@@ -71,7 +68,7 @@ pipeline {
                     fi
 
                     echo "Using includeTags: ${includeTags}"
-                    ./run_tests.sh --marks ${includeTags} -o "${WORKSPACE}/test_results" || true
+                    ./run_tests.sh --marks ${includeTags} -o "${test_results_dir}" || true
 
                     if [ -f "${MW_LOG_OUTPUT_FILE}" ]; then
                         echo "Checking dmesg for segfaults..."
@@ -83,7 +80,7 @@ pipeline {
                             gdb -batch -ex "bt" -ex "quit" "${MW_SW_BIN_PATH}/middlewaresw" core* | tee -a "${MW_LOG_OUTPUT_FILE}"
                         fi
                     fi
-                    zip -r -j "${WORKSPACE}/test_results.zip" "${WORKSPACE}/test_results" || true
+                    zip -r -j "${WORKSPACE}/test_results.zip" "${test_results_dir}" || true
                 '''
             }
         }
@@ -100,21 +97,6 @@ pipeline {
                 fingerprint: true,
                 allowEmptyArchive: true
             )
-            archiveArtifacts(
-                artifacts: 'middlewaresw.log',
-                fingerprint: true,
-                allowEmptyArchive: true
-            )
-            archiveArtifacts(
-                artifacts: 'mwclientwithgui.log',
-                fingerprint: true,
-                allowEmptyArchive: true
-            )
-            archiveArtifacts(
-                artifacts: 'mwclientwithgui_process.log',
-                fingerprint: true,
-                allowEmptyArchive: true
-            )
         }
         success {
             echo 'Build succeeded!'
@@ -125,10 +107,7 @@ pipeline {
                 TEST_RESULT_DIR_FOR_ANALYSIS="/var/jenkins_home/workspace/latest_failed_tests/"
                 rm -fr "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
                 mkdir -p "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
-                cp -r "${WORKSPACE}/test_results/"* "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
-                cp -r "${WORKSPACE}/middlewaresw.log" "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
-                cp -r "${WORKSPACE}/mwclientwithgui.log" "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
-                cp -r "${WORKSPACE}/mwclientwithgui_process.log" "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
+                cp -r "${test_results_dir}/"* "${TEST_RESULT_DIR_FOR_ANALYSIS}" || true
             '''
         }
     }
