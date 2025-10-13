@@ -68,7 +68,7 @@ pipeline {
                     fi
 
                     echo "Using includeTags: ${includeTags}"
-                    run_tests.sh --marks ${includeTags} -o "${WORKSPACE}/results" || true
+                    ./run_tests.sh --marks ${includeTags} -o "${WORKSPACE}/results" || true
 
                     echo "Checking dmesg for segfaults..."
                     dmesg | grep -i segfault | tee -a "${WORKSPACE}/middlewaresw.log"
