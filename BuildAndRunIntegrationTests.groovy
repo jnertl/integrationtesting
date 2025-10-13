@@ -69,7 +69,13 @@ pipeline {
 
                     echo "Using includeTags: ${includeTags}"
                     ./run_tests.sh --marks ${includeTags} -o "${test_results_dir}" || true
-
+                    deactivate
+                '''
+            }
+        }
+        stage('Collect test results') {
+            steps {
+                sh '''
                     cp -r "${test_results_dir}" "${WORKSPACE}/" || true
                     zip -r -j "${WORKSPACE}/test_results.zip" "test_results" || true
                 '''
