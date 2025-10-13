@@ -81,6 +81,11 @@ pipeline {
                 '''
             }
         }
+        stage('Display results') {
+            steps {
+                junit allowEmptyResults: true, testResults: 'test_results/pytest_integration_test_report.xml'
+            }
+        }
     }
     post {
         always {
