@@ -70,15 +70,16 @@ pipeline {
                     echo "Using includeTags: ${includeTags}"
                     ./run_tests.sh --marks ${includeTags} -o "${WORKSPACE}/results" || true
 
-                    echo "Checking dmesg for segfaults..."
-                    dmesg | grep -i segfault | tee -a "${WORKSPACE}/middlewaresw.log"
-                    if [ $? -eq 0 ]; then
-                        echo "TEST FAILED: Segfault detected in dmesg." | tee -a "${WORKSPACE}/middlewaresw.log"
-                        echo "Generating backtrace..." | tee -a "${WORKSPACE}/middlewaresw.log"
-                        cd "${git_checkout_root}/middlewaresw/"
-                        gdb -batch -ex "bt" -ex "quit" "${MW_SW_BIN_PATH}/middlewaresw core"* | tee -a "${MW_LOG_OUTPUT_FILE}"
+                    if [ -f "${WORKSPACE}/middlewaresw.log" ]; then
+                        echo "Checking dmesg for segfaults..."
+                        dmesg | grep -i segfault | tee -a "${WORKSPACE}/middlewaresw.log"
+                        if [ $? -eq 0 ]; then
+                            echo "TEST FAILED: Segfault detected in dmesg." | tee -a "${WORKSPACE}/middlewaresw.log"
+                            echo "Generating backtrace..." | tee -a "${WORKSPACE}/middlewaresw.log"
+                            cd "${git_checkout_root}/middlewaresw/"
+                            gdb -batch -ex "bt" -ex "quit" "${MW_SW_BIN_PATH}/middlewaresw" core* | tee -a "${MW_LOG_OUTPUT_FILE}"
+                        fi
                     fi
-
                     zip -r -j "${WORKSPACE}/test_results.zip" "${WORKSPACE}/results" || true
                 '''
             }
