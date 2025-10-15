@@ -11,12 +11,14 @@ pipeline {
                     rm -fr "${git_checkout_root}" || true
                     mkdir -p "${git_checkout_root}"
                     cd "${git_checkout_root}"
-                    git clone --single-branch --branch main https://github.com/jnertl/middlewaresw.git
                     git clone --single-branch --branch main https://github.com/jnertl/mwclientwithgui.git
-                    echo "middlewaresw"
-                    git --no-pager -C middlewaresw/ show --summary
                     echo "mwclientwithgui"
                     git --no-pager -C mwclientwithgui/ show --summary
+                    git clone --single-branch --branch main https://github.com/jnertl/middlewaresw.git
+                    cd middlewaresw
+                    git submodule update --init --recursive
+                    echo "middlewaresw"
+                    git --no-pager show --summary
                 '''
             }
         }

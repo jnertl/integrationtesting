@@ -17,15 +17,18 @@ pipeline {
                         MW_BRANCH="main"
                     fi
 
-                    git clone --single-branch --branch $MW_BRANCH https://github.com/jnertl/middlewaresw.git
                     git clone --single-branch --branch main https://github.com/jnertl/mwclientwithgui.git
                     git clone --single-branch --branch main https://github.com/jnertl/testing.git
-                    echo "middlewaresw"
-                    git --no-pager -C middlewaresw/ show --summary
                     echo "mwclientwithgui"
                     git --no-pager -C mwclientwithgui/ show --summary
                     echo "testing"
                     git --no-pager -C testing/ show --summary
+
+                    git clone --single-branch --branch $MW_BRANCH https://github.com/jnertl/middlewaresw.git
+                    cd middlewaresw
+                    git submodule update --init --recursive
+                    echo "middlewaresw"
+                    git --no-pager show --summary
                 '''
             }
         }
