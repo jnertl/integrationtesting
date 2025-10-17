@@ -32,4 +32,4 @@ To run all test use test tag: integration
   The application's graceful shutdown (triggered by SIGINT) must also be explicitly recorded in the logs.  
 
 ## 6. Test Framework
-- All integration tests must be implemented using the Robot Framework to ensure consistency and maintainability.  
+- All integration tests must be implemented using the pytest to ensure consistency and maintainability.  
